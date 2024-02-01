@@ -1,20 +1,44 @@
+#include <string>
+#include <vector>
+#include <cmath>
 #include "submodules/libigl/include/igl/cotmatrix.h"
+#include "submodules/libigl/include/igl/igl_inline.h"
+#include "submodules/libigl/include/igl/PI.h"
+#include "submodules/libigl/include/igl/opengl/glfw/Viewer.h"
 #include "submodules/eigen/Eigen/Dense"
 #include "submodules/eigen/Eigen/Sparse"
+#include "submodules/eigen/Eigen/Core"
 #include <iostream>
 
-int main()
+int main(int argc, char *argv[])
 {
-    Eigen::MatrixXd V(4,2);
-    V<<0,0,
-            1,0,
-            1,1,
-            0,1;
-    Eigen::MatrixXi F(2,3);
-    F<<0,1,2,
-            0,2,3;
-    Eigen::SparseMatrix<double> L;
-    igl::cotmatrix(V,F,L);
-    std::cout<<"Hello, mesh: "<<std::endl<<L*V<<std::endl;
-    return 0;
+    // Inline mesh of a cube
+    const Eigen::MatrixXd V= (Eigen::MatrixXd(8,3)<<
+                                                  0.0,0.0,0.0,
+            0.0,0.0,1.0,
+            0.0,1.0,0.0,
+            0.0,1.0,1.0,
+            1.0,0.0,0.0,
+            1.0,0.0,1.0,
+            1.0,1.0,0.0,
+            1.0,1.0,1.0).finished();
+    const Eigen::MatrixXi F = (Eigen::MatrixXi(12,3)<<
+                                                    0,6,4,
+            0,2,6,
+            0,3,2,
+            0,1,3,
+            2,7,6,
+            2,3,7,
+            4,6,7,
+            4,7,5,
+            0,4,5,
+            0,5,1,
+            1,5,7,
+            1,7,3).finished();
+
+    // Plot the mesh
+    igl::opengl::glfw::Viewer viewer;
+    viewer.data().set_mesh(V, F);
+    viewer.data().set_face_based(true);
+    viewer.launch();
 }
