@@ -1,0 +1,9 @@
+[submodule "eigen"]
+	path = eigen
+	url = https://github.com/libigl/eigen.git
+[submodule "libigl"]
+	path = libigl
+	url = https://github.com/libigl/libigl.git
+[submodule "liblgl/include/igl"]
+	path = liblgl/include/igl
+	url = https://github.com/libigl/libigl.git
