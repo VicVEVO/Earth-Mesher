@@ -7,3 +7,9 @@
 [submodule "liblgl/include/igl"]
 	path = liblgl/include/igl
 	url = https://github.com/libigl/libigl.git
+[submodule "submodules/liblgl/include/igl"]
+	path = submodules/liblgl/include/igl
+	url = https://github.com/libigl/libigl.git
+[submodule "submodules/eigen"]
+	path = submodules/eigen
+	url = https://github.com/libigl/eigen.git
