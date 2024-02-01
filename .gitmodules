@@ -13,3 +13,6 @@
 [submodule "submodules/eigen"]
 	path = submodules/eigen
 	url = https://github.com/libigl/eigen.git
+[submodule "submodules/libigl"]
+	path = submodules/libigl
+	url = https://github.com/libigl/libigl.git
