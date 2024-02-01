@@ -1,0 +1,3 @@
+/home/vic_pabo/Documents/SpaSim/cmake-build-debug/CMakeFiles/SpaSim.dir
+/home/vic_pabo/Documents/SpaSim/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/vic_pabo/Documents/SpaSim/cmake-build-debug/CMakeFiles/rebuild_cache.dir
