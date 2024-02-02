@@ -1,5 +1,5 @@
-//#include "build/_deps/libigl-src/include/igl/opengl/glfw/Viewer.cpp"
 #include <igl/opengl/glfw/Viewer.h>
+
 void createSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
     V.resize((N + 1) * (N + 1), 3);
     F.resize(N * N * 2, 3);
