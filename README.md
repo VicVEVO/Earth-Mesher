@@ -1,32 +1,58 @@
-# SpaSim
+# libigl example project
 
-Lemme cook
+A blank project example showing how to use libigl and cmake. Feel free and
+encouraged to copy or fork this project as a way of starting a new personal
+project using libigl.
 
-## Run the project
+## Compile
 
-**Compile** this project using the standard cmake routine:
+Compile this project using the standard cmake routine:
 
     mkdir build
     cd build
     cmake ..
     make
 
-This should find and build the dependencies and create a `example` binary. Then, **run** it with:
+This should find and build the dependencies and create a `example` binary.
+
+## Run
+
+From within the `build` directory just issue:
 
     ./example
 
-## Dependencies
+A glfw app should launch displaying a 3D cube.
 
-The dependencies are STL, Eigen, libigl and the dependencies
-of the `igl::opengl::glfw::Viewer` (OpenGL, glad and GLFW).
+## Using other modules of libigl
 
-The latter requires the glfw module of libigl, which shows up in the CMakeLists.txt 
+This example project uses the `igl::opengl::glfw::Viewer`, therefore it requires
+the glfw module of libigl. This shows up in the CMakeLists.txt 
 
 ```cmake
 igl_include(glfw)
 …
 target_link_libraries(${PROJECT_NAME} PUBLIC igl::glfw)
 ```
+
+Suppose you also wanted to use the triangle module in libigl. Then you would
+change these to
+
+```cmake
+igl_include(glfw)
+igl_include(restricted triangle)
+…
+target_link_libraries(${PROJECT_NAME} PUBLIC igl::glfw igl_restricted::triangle)
+```
+
+The "restricted" appears in this case because the triangle library has a more
+restricted license than libigl. See other examples commented out in
+CMakeLists.txt.
+
+
+## Dependencies
+
+The only dependencies are STL, Eigen, [libigl](http://libigl.github.io/libigl/) and the dependencies
+of the `igl::opengl::glfw::Viewer` (OpenGL, glad and GLFW).
 
 The CMake build system will automatically download libigl and its dependencies using
 [CMake FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html),

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/libigl-example-project.iml" filepath="$PROJECT_DIR$/.idea/libigl-example-project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Earth Mesher.iml" filepath="$PROJECT_DIR$/.idea/Earth Mesher.iml" />
     </modules>
   </component>
 </project>
