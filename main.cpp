@@ -26,8 +26,8 @@ int main(int argc, char* argv[]) {
     // Sphere creation
     Eigen::MatrixXd V;
     Eigen::MatrixXi F;
-    createSphere(10, V, F);
 
+    createSphere(10, V, F);
     // Mesh plotting
     igl::opengl::glfw::Viewer viewer;
     viewer.data().set_mesh(V, F);
