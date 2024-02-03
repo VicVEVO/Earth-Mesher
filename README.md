@@ -4,7 +4,7 @@ This project involves the study of geodesy, i.e. the shape of the Earth, using m
 
 ## How to convert .nc files to .csv
 
-This project uses *NASA* TOPEX/POSEIDON geophysical data in **.nc** files, to convert them to **.csv**, use `script.py` as follows:
+This project uses NASA's TOPEX/POSEIDON geophysical data in **.nc** files, to convert them to **.csv**, use `script.py` as follows:
 Create a virtual environment and activate it with the following commands:
 
         python3 -m venv virtual_env
