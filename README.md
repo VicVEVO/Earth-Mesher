@@ -2,12 +2,6 @@
 
 This project involves the study of geodesy, i.e. the shape of the Earth, using measurements of its gravity field. Lemme cook
 
-## TODO:
-- [ ] Prendre en compte les .nc en HDF5 pour les convertir en NetCDF: tout traduire ou déterminer si un .nc est en HDF5 ? (plus dur)
-- [ ] Ne garder que latitude, longitude, altitude pour les .csv pour qu'ils soient moins lourds: prendre en compte commande utilisateur disant * (on prend tout pour le .csv) ou juste certains champs.
-- [ ] Faire un projet à part où je convertis ça (et ajouter un executable pour changer le folder dans lequel ça translate les types de fichiers) et mettre juste un submodule dans ce projet.
-
-
 ## How to convert .nc files to .csv
 
 This project uses NASA's TOPEX/POSEIDON geophysical data in **.nc** files, to convert them to **.csv**, use `script.py` as follows:
