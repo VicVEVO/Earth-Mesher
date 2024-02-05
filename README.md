@@ -1,14 +1,6 @@
 # Earth Mesher
 
 This project involves the study of geodesy, i.e. the shape of the Earth, using measurements of its gravity field. Lemme cook
-
-## How to convert .nc files to .csv
-
-This project uses NASA's TOPEX/POSEIDON geophysical data in **.nc** files, to convert them to **.csv**, use `script.py` as described in the description
-
-‎Deactivate -if needed- the virtual environment:
-
-        deactivate
         
 ## How to run the project
 
