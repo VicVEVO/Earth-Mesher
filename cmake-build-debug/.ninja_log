@@ -1,0 +1,24 @@
+# ninja log v5
+2	112	1707248777061031944	_deps/glfw-build/src/CMakeFiles/glfw.dir/vulkan.c.o	d96ca812b3a3be88
+1	113	1707248777061031944	_deps/glfw-build/src/CMakeFiles/glfw.dir/init.c.o	5d9867655f06ba7e
+1	118	1707248777065031930	_deps/glfw-build/src/CMakeFiles/glfw.dir/context.c.o	3682a91685feeee6
+4	138	1707248777085031857	_deps/glfw-build/src/CMakeFiles/glfw.dir/x11_monitor.c.o	52b05cdaaa4a8a7
+2	139	1707248777089031843	_deps/glfw-build/src/CMakeFiles/glfw.dir/monitor.c.o	5362c72126887e79
+113	177	1707248777125031712	_deps/glfw-build/src/CMakeFiles/glfw.dir/xkb_unicode.c.o	4e76abff370a4073
+3	181	1707248777129031699	_deps/glfw-build/src/CMakeFiles/glfw.dir/window.c.o	3dc96fb1e32fbab1
+118	194	1707248777145031640	_deps/glfw-build/src/CMakeFiles/glfw.dir/posix_thread.c.o	eada9cc9a377aa4f
+114	205	1707248777153031611	_deps/glfw-build/src/CMakeFiles/glfw.dir/posix_time.c.o	5d75c030601b9f63
+3	207	1707248777157031597	_deps/glfw-build/src/CMakeFiles/glfw.dir/x11_init.c.o	9f4b86a3dccb32dd
+1	225	1707248777173031538	_deps/glfw-build/src/CMakeFiles/glfw.dir/input.c.o	e7f2661ae519286e
+138	237	1707248777185031495	_deps/glfw-build/src/CMakeFiles/glfw.dir/glx_context.c.o	d4a7de24ac3b74fd
+177	253	1707248777201031437	_deps/glfw-build/src/CMakeFiles/glfw.dir/osmesa_context.c.o	2b20af2c112c6b18
+139	268	1707248777217031379	_deps/glfw-build/src/CMakeFiles/glfw.dir/egl_context.c.o	f82b85d477ec0830
+181	281	1707248777229031336	_deps/glfw-build/src/CMakeFiles/glfw.dir/linux_joystick.c.o	3d98444274f7ba4f
+8	288	1707248777237031307	_deps/glfw-build/src/CMakeFiles/glfw.dir/x11_window.c.o	86d111e140683268
+194	293	1707248777241031292	_deps/glad-build/CMakeFiles/glad.dir/src/glad.c.o	9a471aa8b14ba51e
+293	298	1707248777249031263	_deps/glad-build/libglad.a	de91e2e14d6ddf0e
+288	303	1707248777253031249	_deps/glfw-build/src/libglfw3.a	d03eb88b807ac01e
+1	18921	1707248795836963776	CMakeFiles/render.dir/main.cpp.o	e56fe41f8053554e
+18922	19568	1707248796512961314	render	32a4a4c806bb8494
+1	19395	1707250531937175751	CMakeFiles/render.dir/main.cpp.o	e56fe41f8053554e
+19395	20047	1707250532616700565	render	32a4a4c806bb8494

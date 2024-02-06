@@ -1,5 +1,30 @@
 #include <igl/opengl/glfw/Viewer.h>
 
+Eigen::MatrixXf matrixFromCSV(const std::string& csvFile) {
+    std::ifstream csvData(csvFile);
+
+    // Determining the number of rows and columns of the matrix
+    std::string matrixSizeString;
+    std::getline(csvData, matrixSizeString);
+    std::istringstream matrixSizeStream(matrixSizeString);
+    int rows, cols;
+    matrixSizeStream >> rows >> cols;
+
+    // Creation of the matrix
+    Eigen::MatrixXf matrix(rows, cols);
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            std::string matrixEntry;
+            std::getline(csvData, matrixEntry, ',');
+            matrix(i, j) = std::stof(matrixEntry);
+        }
+    }
+    csvData.close();
+    return matrix;
+}
+
+
 void createSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
     V.resize((N + 1) * (N + 1), 3);
     F.resize(N * N * 2, 3);
