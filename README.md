@@ -1,7 +1,9 @@
 # Earth Mesher
 
 This project involves the study of geodesy, i.e. the shape of the Earth, using measurements of its gravity field. Lemme cook
-        
+
+A faire: resoudre lecture fichier
+
 ## How to run the project
 
 **Compile** this project using the standard cmake routine:
