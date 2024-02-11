@@ -59,46 +59,72 @@ float radiansToDegrees(float radians) {
     return radians * 180.0 / M_PI;
 }
 
-// Function to create a sphere with vertices and faces based on altitude, latitude, and longitude
-void createSphere(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
-    // Determine the number of vertices and faces
-    int N = altitudes.cols();
-    int numVertices = (N + 1) * (N + 1);
-    int numFaces = 2 * N * N;
-
-    // Initialize the vertices and faces matrices
-    V.resize(numVertices, 3);
-    F.resize(numFaces, 3);
-
-    // Fill in the vertices based on altitude, latitude, and longitude
-    for (int i = 0; i <= N; ++i) {
-        for (int j = 0; j <= N; ++j) {
-            float altitude = altitudes[i];
-            float latitude = latitudes[i];
-            float longitude = longitudes[j];
-
-            // Calculation of the spherical coordinates of latitude and longitude
-            float theta = longitude;
-            float phi = M_PI / 2 - latitude;
-
-            // Add the altitude
-            V.row(i * (N + 1) + j) << std::sin(phi) * std::cos(theta) * altitude, std::sin(phi) * std::sin(theta) * altitude, std::cos(phi) * altitude;
-        }
-    }
-
-    // Fill in the faces
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < N; ++j) {
-            int index = i * N + j;
-            F.row(2 * index) << i * (N + 1) + j, (i + 1) * (N + 1) + j, i * (N + 1) + j + 1;
-            F.row(2 * index + 1) << (i + 1) * (N + 1) + j, (i + 1) * (N + 1) + j + 1, i * (N + 1) + j + 1;
-        }
+void color(float altitude, float x, float y, float z, int R1, int G1, int B1, int R2, int G2, int B2, int R3, int G3, int B3, int& R, int& G, int& B) {
+    if (altitude <= x) {
+        R = R1;
+        G = G1;
+        B = B1;
+    } else if (altitude <= y) {
+        float t = (altitude - x) / (y - x);
+        R = R1 + t * (R2 - R1);
+        G = G1 + t * (G2 - G1);
+        B = B1 + t * (B2 - B1);
+    } else if (altitude <= z) {
+        float t = (altitude - y) / (z - y);
+        R = R2 + t * (R3 - R2);
+        G = G2 + t * (G3 - G2);
+        B = B2 + t * (B3 - B2);
+    } else {
+        R = R3;
+        G = G3;
+        B = B3;
     }
 }
-int main(int argc, char* argv[]) {
-    // Sphere creation
-    Eigen::MatrixXd V;
-    Eigen::MatrixXi F;
+
+// Function to create a sphere with vertices and faces based on altitude, latitude, and longitude
+void displayRandomPoints(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes) {
+    int n = altitudes.size();
+
+    // Create matrices to store the coordinates and colors of the points
+    Eigen::MatrixXd V(n, 3);
+    Eigen::MatrixXd C(n, 3);
+
+    int R,G,B;
+    float altMin = 0;
+    float altAvg = 0.3;
+    float altMax = 1;
+    int R1 = 0, G1 = 0, B1 = 255;
+    int R2 = 0, G2 = 255, B2 = 0;
+    int R3 = 255, G3 = 255, B3 = 255;
+
+    // Fill the matrices with random data
+    for (int i = 0; i < n; ++i) {
+        double theta = longitudes(i) + M_PI/2;
+        double phi = latitudes(i);
+
+        double x = sin(phi) * cos(theta);
+        double y = sin(phi) * sin(theta);
+        double z = cos(phi);
+        V.row(i) = (altitudes(i)/1356038) * Eigen::Vector3d(x, y, z);
+
+        color((altitudes(i)-1339000)/20000, altMin, altAvg, altMax, R1, G1, B1, R2, G2, B2, R3, G3, B3, R, G, B);
+        std::cout << (altitudes(i)-1339000)/20000 << " " << R << " " << G << " " << B << std::endl;
+
+        // Set colors for visualization
+        C(i, 0) = R;
+        C(i, 1) = G;
+        C(i, 2) = B;
+    }
+
+    // Set up the viewer
+    igl::opengl::glfw::Viewer viewer;
+    viewer.data().set_points(V, C);
+
+    // Launch the viewer
+    viewer.launch();
+}
+
+int main() {
     std::string csvFile = "/home/vic_pabo/Documents/Earth-Mesher/submodules/NC-Converter/data/csv_files/TP_GPN_2PfP314_006_20010323_223727_20010323_233339.csv";
     std::cout << csvFile <<std::endl;
     Eigen::MatrixXf dataMat = getMatrixFromCSV(csvFile);
@@ -106,12 +132,5 @@ int main(int argc, char* argv[]) {
     Eigen::VectorXf altitudes = dataMat.col(0);
     Eigen::VectorXf latitudes = dataMat.col(1);
     Eigen::VectorXf longitudes = dataMat.col(2);
-
-    createSphere(altitudes, latitudes, longitudes, V, F);
-    // Mesh plotting
-    igl::opengl::glfw::Viewer viewer;
-    viewer.data().set_mesh(V, F);
-    viewer.data().set_face_based(true);
-    viewer.launch();
-
+    displayRandomPoints(altitudes,latitudes,longitudes);
 }
