@@ -16,9 +16,9 @@ Using satellite data, create a comprehensive 3D visualization of Earth's measure
     cmake ..
     make
 
-This should find and build the dependencies and create a `render` binary. Then, **run** it with:
+This should find and build the dependencies and create a `render` binary. Then, **run** it for a render with points (-P) or a mesh (-S):
 
-    ./render
+    ./render -P (or -S) <FILEPATH/file.csv>
 
 ## Dependencies
 
