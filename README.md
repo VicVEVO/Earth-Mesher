@@ -1,8 +1,6 @@
 # Earth Mesher
 
-This project involves the study of geodesy, i.e. the shape of the Earth, using measurements of its gravity field. Lemme cook
-
-A faire: resoudre lecture fichier
+Utilizing satellite data, create a comprehensive 3D visualization of Earth's measured characteristics.
 
 ## How to run the project
 
