@@ -1,18 +1,28 @@
 /**
- *  *description du projet*
- *
- * A optimiser
+ *  Project description (bruh)
  *
  */
 #include <igl/opengl/glfw/Viewer.h>
+#include "errorCode.h"
+#include "errorMessages.h"
 
+// Function to convert a .csv File into a Eigen Matrix
 Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
     std::ifstream csvData;
     csvData.open(csvFile);
 
     std::string lineRead;
     std::getline(csvData, lineRead);
+
+    // Checking if the csvFile actually exists
+    if (lineRead.empty()){
+        throw ErrorCode::FileNotFound;
+    }
+
     int nbFields = int(std::count(lineRead.begin(), lineRead.end(), ',')) + 1;
+    if (nbFields < 3){
+        throw ErrorCode::NotEnoughFields;
+    }
     int nbMeasurements = 0;
     Eigen::MatrixXf matrix(nbMeasurements, nbFields);
 
@@ -78,7 +88,7 @@ void color(float altitude, float x, float y, float z, int R1, int G1, int B1, in
 }
 
 // Function to create a sphere with vertices and faces based on altitude, latitude, and longitude
-void displayRandomPoints(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes) {
+void displayPoints(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes) {
     int n = altitudes.size();
 
     // Create matrices to store the coordinates and colors of the points
@@ -106,17 +116,32 @@ void displayRandomPoints(const Eigen::VectorXf& altitudes, const Eigen::VectorXf
     viewer.data().set_points(V, C);
     viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
     viewer.data().point_size = 5;
+
     // Launch the viewer
     viewer.launch(false,"Test");
 }
 
-int main() {
-    std::string csvFile = "/home/vic_pabo/Documents/Earth-Mesher/submodules/NC-Converter/data/csv_files/TP_GPN_2PfP314_006_20010323_223727_20010323_233339.csv";
-    std::cout << csvFile <<std::endl;
-    Eigen::MatrixXf dataMat = getMatrixFromCSV(csvFile);
+int main(const int argc, const char *argv[]) {
+    try {
+        if (argc == 1 | argc == 2) {
+            throw ErrorCode::NotEnoughArguments;
+        }
 
-    Eigen::VectorXf altitudes = dataMat.col(0);
-    Eigen::VectorXf latitudes = dataMat.col(1);
-    Eigen::VectorXf longitudes = dataMat.col(2);
-    displayRandomPoints(altitudes,latitudes,longitudes);
+        // Get the plot type and CSV file name from the command-line arguments
+        std::string plotType = argv[1];
+        std::string csvFile = argv[2];
+
+        // Read the matrix from the CSV file
+        Eigen::MatrixXf dataMat = getMatrixFromCSV(csvFile);
+
+        // Extract the altitudes, latitudes, and longitudes from the matrix
+        Eigen::VectorXf altitudes = dataMat.col(0);
+        Eigen::VectorXf latitudes = dataMat.col(1);
+        Eigen::VectorXf longitudes = dataMat.col(2);
+
+        displayPoints(altitudes, latitudes, longitudes);
+    }
+    catch(const ErrorCode& errorCode) {
+        std::cerr << errorMessages.at(errorCode) << std::endl;
+    }
 }
