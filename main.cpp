@@ -55,10 +55,6 @@ Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
     return matrix;
 }
 
-float radiansToDegrees(float radians) {
-    return radians * 180.0 / M_PI;
-}
-
 void color(float altitude, float x, float y, float z, int R1, int G1, int B1, int R2, int G2, int B2, int R3, int G3, int B3, int& R, int& G, int& B) {
     if (altitude <= x) {
         R = R1;
@@ -89,14 +85,6 @@ void displayRandomPoints(const Eigen::VectorXf& altitudes, const Eigen::VectorXf
     Eigen::MatrixXd V(n, 3);
     Eigen::MatrixXd C(n, 3);
 
-    int R,G,B;
-    float altMin = 0;
-    float altAvg = 0.3;
-    float altMax = 1;
-    int R1 = 0, G1 = 0, B1 = 255;
-    int R2 = 0, G2 = 255, B2 = 0;
-    int R3 = 255, G3 = 255, B3 = 255;
-
     // Fill the matrices with random data
     for (int i = 0; i < n; ++i) {
         double theta = longitudes(i) + M_PI/2;
@@ -107,21 +95,19 @@ void displayRandomPoints(const Eigen::VectorXf& altitudes, const Eigen::VectorXf
         double z = cos(phi);
         V.row(i) = (altitudes(i)/1356038) * Eigen::Vector3d(x, y, z);
 
-        color((altitudes(i)-1339000)/20000, altMin, altAvg, altMax, R1, G1, B1, R2, G2, B2, R3, G3, B3, R, G, B);
-        std::cout << (altitudes(i)-1339000)/20000 << " " << R << " " << G << " " << B << std::endl;
-
         // Set colors for visualization
-        C(i, 0) = R;
-        C(i, 1) = G;
-        C(i, 2) = B;
+        C(i, 0) = 255;
+        C(i, 1) = 255;
+        C(i, 2) = 255;
     }
 
     // Set up the viewer
     igl::opengl::glfw::Viewer viewer;
     viewer.data().set_points(V, C);
-
+    viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
+    viewer.data().point_size = 5;
     // Launch the viewer
-    viewer.launch();
+    viewer.launch(false,"Test");
 }
 
 int main() {
