@@ -2,9 +2,9 @@
 
 Using satellite data, create a comprehensive 3D visualization of Earth's measured characteristics.
 
-## Examples by plotting the geodesy
+## Examples by plotting plotting altitude points
 <p align="center">
-	<a href="https://github.com/VicVEVO/Earth-Mesher/blob/029848795746c3770675454244a5780ebcb422fb/resources/"><img src="https://github.com/VicVEVO/Earth-Mesher/blob/029848795746c3770675454244a5780ebcb422fb/resources/example-1.gif" width="700"></a>
+	<a href="https://github.com/VicVEVO/Earth-Mesher/blob/029848795746c3770675454244a5780ebcb422fb/resources/"><img src="https://github.com/VicVEVO/Earth-Mesher/blob/029848795746c3770675454244a5780ebcb422fb/resources/example-1.gif" width="900"></a>
 </p>
 
 ## How to run the project
