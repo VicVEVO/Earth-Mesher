@@ -1,6 +1,6 @@
 # Earth Mesher
 
-Using satellite data, create a comprehensive 3D visualization of Earth's measured characteristics.
+Using satellite data, create a comprehensive 3D visualization of Earth's measured characteristics (such as altitude, temperature,..).
 
 ## Examples by plotting plotting altitude points
 <p align="center">
