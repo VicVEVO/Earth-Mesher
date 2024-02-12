@@ -1,3 +1,6 @@
+# Pabo files
+resources/*
+
 # Compiled Object files
 *.slo
 *.lo
