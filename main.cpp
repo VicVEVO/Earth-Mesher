@@ -213,7 +213,7 @@ int main(const int argc, const char *argv[]) {
     // Launch the viewer
     viewer.launch(false,"Test");
 */
-      // To unmute
+    // To unmute
     try {
         if (argc == 1 | argc == 2) {
             throw ErrorCode::NotEnoughArguments;
