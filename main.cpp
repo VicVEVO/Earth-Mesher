@@ -65,6 +65,45 @@ Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
     return matrix;
 }
 
+// Function to create a sphere with vertices and faces based on altitude, latitude, and longitude
+void setPoints(const int n, const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXd& C) {
+
+    // Fill the matrices with data
+    for (int i = 0; i < n; ++i) {
+        double theta = longitudes(i) + M_PI/2;
+        double phi = latitudes(i);
+
+        double x = sin(phi) * cos(theta);
+        double y = sin(phi) * sin(theta);
+        double z = cos(phi);
+        V.row(i) = (altitudes(i)/1356038) * Eigen::Vector3d(x, y, z);
+
+        // Set colors for visualization
+        C(i, 0) = 255;
+        C(i, 1) = 255;
+        C(i, 2) = 255;
+    }
+}
+
+void viewPoints(const Eigen::MatrixXd& V, const Eigen::MatrixXd& C) {
+    // Set up the viewer
+    igl::opengl::glfw::Viewer viewer;
+
+    // Set the viewer data
+    viewer.data().set_points(V, C);
+    viewer.data().point_size = 5;
+
+    // Set the background color
+    viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
+
+    // Launch the viewer
+    viewer.launch(false,"Test");
+}
+
+void viewMesh(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) {
+}
+
+/*
 void color(float altitude, float x, float y, float z, int R1, int G1, int B1, int R2, int G2, int B2, int R3, int G3, int B3, int& R, int& G, int& B) {
     if (altitude <= x) {
         R = R1;
@@ -86,42 +125,95 @@ void color(float altitude, float x, float y, float z, int R1, int G1, int B1, in
         B = B3;
     }
 }
+*/
 
-// Function to create a sphere with vertices and faces based on altitude, latitude, and longitude
-void displayPoints(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes) {
-    int n = altitudes.size();
+/*
+void createSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
+    V.resize((N + 1) * (N + 1), 3);
+    F.resize(N * N * 2, 3);
 
-    // Create matrices to store the coordinates and colors of the points
-    Eigen::MatrixXd V(n, 3);
-    Eigen::MatrixXd C(n, 3);
+    for (int i = 0; i <= N; ++i) {
+        for (int j = 0; j <= N; ++j) {
+            double theta = 2.0 * M_PI * static_cast<double>(i) / static_cast<double>(N);
+            double phi = M_PI * static_cast<double>(j) / static_cast<double>(N);
 
-    // Fill the matrices with random data
-    for (int i = 0; i < n; ++i) {
+            V.row(i * (N + 1) + j) << std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi);
+        }
+    }
+
+    for (int i = 0; i < N; ++i) {
+        for (int     j = 0; j < N; ++j) {
+            int index = i * N + j;
+            F.row(2 * index) << i * (N + 1) + j, (i + 1) * (N + 1) + j, i * (N + 1) + j + 1;
+            F.row(2 * index + 1) << (i + 1) * (N + 1) + j, (i + 1) * (N + 1) + j + 1, i * (N + 1) + j + 1;
+        }
+    }
+}
+ */
+
+/*
+void createMesh(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
+    // Get the number of vertices
+    int N = altitudes.rows();
+
+    // Resize the vertex and face matrices
+    V.resize(N, 3);
+    F.resize(N - 2, 3);
+
+    // Populate the vertex matrix
+    for (int i = 0; i < N; i++) {
         double theta = longitudes(i) + M_PI/2;
         double phi = latitudes(i);
 
         double x = sin(phi) * cos(theta);
         double y = sin(phi) * sin(theta);
         double z = cos(phi);
-        V.row(i) = (altitudes(i)/1356038) * Eigen::Vector3d(x, y, z);
 
-        // Set colors for visualization
-        C(i, 0) = 255;
-        C(i, 1) = 255;
-        C(i, 2) = 255;
+
+        // Store the spherical coordinates in the vertex matrix
+        V(i, 0) = x;
+        V(i, 1) = y;
+        V(i, 2) = z;
     }
+
+    // Populate the face matrix
+    for (int i = 2; i < N; i++) {
+        F(i-2, 0) = 0;
+        F(i-2, 1) = i-1;
+        F(i-2, 2) = i;
+    }
+}
+*/
+
+int main(const int argc, const char *argv[]) {
+
+    /*
+    std::string csvFile = "/home/vic_pabo/Documents/Earth-Mesher/submodules/NC-Converter/data/csv_files/TP_GPN_2PfP314_006_20010323_223727_20010323_233339.csv";
+    Eigen::MatrixXf dataMat = getMatrixFromCSV(csvFile);
+
+    Eigen::VectorXf altitudes = dataMat.col(0);
+    Eigen::VectorXf latitudes = dataMat.col(1);
+    Eigen::VectorXf longitudes = dataMat.col(2);
+
+
+    Eigen::MatrixXd V;
+    Eigen::MatrixXi F;
+
+    //setPoints(altitudes, latitudes, longitudes);
+
+    //createMesh(altitudes, latitudes, longitudes, V, F);
+
+    //createSphere(100,V,F);
+
 
     // Set up the viewer
     igl::opengl::glfw::Viewer viewer;
-    viewer.data().set_points(V, C);
-    viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
-    viewer.data().point_size = 5;
+    viewer.data().set_mesh(V, F);
 
     // Launch the viewer
     viewer.launch(false,"Test");
-}
-
-int main(const int argc, const char *argv[]) {
+*/
+      // To unmute
     try {
         if (argc == 1 | argc == 2) {
             throw ErrorCode::NotEnoughArguments;
@@ -139,8 +231,27 @@ int main(const int argc, const char *argv[]) {
         Eigen::VectorXf latitudes = dataMat.col(1);
         Eigen::VectorXf longitudes = dataMat.col(2);
 
-        displayPoints(altitudes, latitudes, longitudes);
+        // Extract the size of the data set
+        int n = altitudes.size();
+
+        if (plotType == "-P") {
+            // Create matrices to store the coordinates and colors of the points
+            Eigen::MatrixXd V(n, 3);
+            Eigen::MatrixXd C(n, 3);
+
+            setPoints(n, altitudes, latitudes, longitudes, V, C);
+
+            // Display data
+            viewPoints(V, C);
+        } else {
+            Eigen::MatrixXd V(n, 3);;
+            Eigen::MatrixXi F(n, 3);;
+
+            // Display data
+            viewMesh(V, F);
+        }
     }
+
     catch(const ErrorCode& errorCode) {
         std::cerr << errorMessages.at(errorCode) << std::endl;
     }
