@@ -295,22 +295,25 @@ int main(const int argc, const char *argv[]) {
 
             // Display data
             viewPoints(V, C);
+
         } else {
+            // Create matrices to store the vertices and triangle connectivities
             Eigen::MatrixXd V;
             Eigen::MatrixXi F;
 
-            //createLines(altitudes, latitudes, longitudes, V, F);
-
-            createSphere(100,V,F);
-
-            viewMesh(V,F);
+            if (plotType == "-L") {
+                createLines(altitudes, latitudes, longitudes, V, F);
+            } else {
+                createSphere(100,V,F);
+            }
 
             // Display data
+            viewMesh(V,F);
         }
     }
 
     catch(const ErrorCode& errorCode) {
         std::cerr << errorMessages.at(errorCode) << std::endl;
     }
-}
 
+}
