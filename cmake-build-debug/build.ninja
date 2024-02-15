@@ -68,13 +68,6 @@ build CMakeFiles/render.dir/main.cpp.o: CXX_COMPILER__render_unscanned_Debug /ho
   OBJECT_DIR = CMakeFiles/render.dir
   OBJECT_FILE_DIR = CMakeFiles/render.dir
 
-build CMakeFiles/render.dir/test.cpp.o: CXX_COMPILER__render_unscanned_Debug /home/vic_pabo/Documents/Earth-Mesher/test.cpp || cmake_object_order_depends_target_render
-  DEP_FILE = CMakeFiles/render.dir/test.cpp.o.d
-  FLAGS = -g -fdiagnostics-color=always
-  INCLUDES = -I/home/vic_pabo/Documents/Earth-Mesher/cmake-build-debug/_deps/libigl-src/include -I/home/vic_pabo/Documents/Earth-Mesher/cmake-build-debug/_deps/glad-src/include -I/home/vic_pabo/Documents/Earth-Mesher/cmake-build-debug/_deps/glfw-src/include -isystem /home/vic_pabo/Documents/Earth-Mesher/cmake-build-debug/_deps/eigen-src
-  OBJECT_DIR = CMakeFiles/render.dir
-  OBJECT_FILE_DIR = CMakeFiles/render.dir
-
 
 # =============================================================================
 # Link build statements for EXECUTABLE target render
@@ -83,7 +76,7 @@ build CMakeFiles/render.dir/test.cpp.o: CXX_COMPILER__render_unscanned_Debug /ho
 #############################################
 # Link the executable render
 
-build render: CXX_EXECUTABLE_LINKER__render_Debug CMakeFiles/render.dir/main.cpp.o CMakeFiles/render.dir/test.cpp.o | _deps/glad-build/libglad.a /usr/lib/x86_64-linux-gnu/libOpenGL.so _deps/glfw-build/src/libglfw3.a /usr/lib/x86_64-linux-gnu/librt.a /usr/lib/x86_64-linux-gnu/libm.so || _deps/glad-build/libglad.a _deps/glfw-build/src/libglfw3.a _deps/libigl-build/igl_core igl_glfw igl_opengl
+build render: CXX_EXECUTABLE_LINKER__render_Debug CMakeFiles/render.dir/main.cpp.o | _deps/glad-build/libglad.a /usr/lib/x86_64-linux-gnu/libOpenGL.so _deps/glfw-build/src/libglfw3.a /usr/lib/x86_64-linux-gnu/librt.a /usr/lib/x86_64-linux-gnu/libm.so || _deps/glad-build/libglad.a _deps/glfw-build/src/libglfw3.a _deps/libigl-build/igl_core igl_glfw igl_opengl
   FLAGS = -g
   LINK_LIBRARIES = _deps/glad-build/libglad.a  /usr/lib/x86_64-linux-gnu/libOpenGL.so  _deps/glfw-build/src/libglfw3.a  /usr/lib/x86_64-linux-gnu/librt.a  -lm  -ldl
   OBJECT_DIR = CMakeFiles/render.dir

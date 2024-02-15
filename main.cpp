@@ -113,7 +113,7 @@ void color(float altitude, float x, float y, float z, int R1, int G1, int B1, in
 */
 
 
-void createSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
+void colorizeSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::MatrixXd& C) {
     V.resize((N + 1) * (N + 1), 3);
     F.resize(N * N * 2, 3);
 
@@ -123,6 +123,15 @@ void createSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
             double phi = M_PI * static_cast<double>(j) / static_cast<double>(N);
 
             V.row(i * (N + 1) + j) << std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi);
+
+            // Recent
+
+            if (phi > 0.1 * M_PI && phi < 0.4 * M_PI && theta > 0.1 * 2.0 * M_PI && theta < 0.4 * 2.0 * M_PI) {
+                C.row((i * (N + 1) + j)%N) << 255, 0, 0;
+            } else {
+                C.row((i * (N + 1) + j)%N) << 0, 255, 0;
+            }
+
         }
     }
 
@@ -137,14 +146,9 @@ void createSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
 }
 
 
-
 void createLines(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
     // Get the number of vertices
     int N = altitudes.rows();
-
-    // Resize the vertex and face matrices
-    V.resize(N, 3);
-    F.resize(N - 2, 3);
 
     // Populate the vertex matrix
     for (int i = 0; i < N; i++) {
@@ -154,7 +158,6 @@ void createLines(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitu
         double x = sin(phi) * cos(theta);
         double y = sin(phi) * sin(theta);
         double z = cos(phi);
-
 
         // Store the spherical coordinates in the vertex matrix
         V(i, 0) = x;
@@ -256,13 +259,35 @@ void viewMesh(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) {
     C.setConstant(255);
     viewer.data().set_colors(C);
 
-    // Disable the lines
+    // Disable the lines view by default
     viewer.data().show_lines = false;
 
     // Launch the viewer
     viewer.launch(false,"Example window with lines");
 }
 
+void viewMeshColor(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const Eigen::MatrixXd& C) {
+
+    // Set up the viewer
+    igl::opengl::glfw::Viewer viewer;
+
+    // Set the viewer data
+    viewer.data().set_mesh(V, F);
+
+    // Set the background color
+    viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
+
+    // Set the colors
+    viewer.data().set_colors(C);
+
+    // Disable the lines view by default
+    viewer.data().show_lines = false;
+
+    // Launch the viewer
+    viewer.launch(false,"Example window with lines");
+}
+
+// Main procedure
 
 int main(const int argc, const char *argv[]) {
     // To unmute
@@ -286,29 +311,29 @@ int main(const int argc, const char *argv[]) {
         // Extract the size of the data set
         int n = altitudes.size();
 
-        if (plotType == "-P") {
-            // Create matrices to store the coordinates and colors of the points
-            Eigen::MatrixXd V(n, 3);
-            Eigen::MatrixXd C(n, 3);
+        // Create matrices to store the coordinates and colors of the points
+        Eigen::MatrixXd V(n, 3);
+        Eigen::MatrixXd C(n, 3);
 
+        if (plotType == "-P") {
             setPoints(n, altitudes, latitudes, longitudes, V, C);
 
             // Display data
             viewPoints(V, C);
 
         } else {
-            // Create matrices to store the vertices and triangle connectivities
-            Eigen::MatrixXd V;
-            Eigen::MatrixXi F;
+            // Create a matrix to store triangle connectives
+            Eigen::MatrixXi F(n-2,3);
 
             if (plotType == "-L") {
                 createLines(altitudes, latitudes, longitudes, V, F);
+                C.setConstant(255);
             } else {
-                createSphere(100,V,F);
+                colorizeSphere(100,V,F,C);
             }
 
             // Display data
-            viewMesh(V,F);
+            viewMeshColor(V,F,C);
         }
     }
 
