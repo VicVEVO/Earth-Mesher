@@ -7,6 +7,11 @@ Using satellite data, create a comprehensive 3D visualization of Earth's measure
 	<a href="https://github.com/VicVEVO/Earth-Mesher/blob/029848795746c3770675454244a5780ebcb422fb/resources/"><img src="https://github.com/VicVEVO/Earth-Mesher/blob/029848795746c3770675454244a5780ebcb422fb/resources/example-1.gif" width="900"></a>
 </p>
 
+## Example by plotting altitude (with lines)
+<p align="center">
+	<a href="https://github.com/VicVEVO/Earth-Mesher/blob/17d05df77ab0ff932cb8bccba06b40b95c17a717/resources/"><img src="https://github.com/VicVEVO/Earth-Mesher/blob/17d05df77ab0ff932cb8bccba06b40b95c17a717/resources/example-2.gif" width="900"></a>
+</p>
+
 ## How to run the project
 
 **Compile** this project using the standard cmake routine:
