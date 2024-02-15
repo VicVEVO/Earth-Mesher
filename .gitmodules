@@ -1,3 +1,6 @@
 [submodule "NC-Converter"]
 	path = NC-Converter
 	url = https://github.com/VicVEVO/NC-Converter.git
+[submodule "submodules/polyscope"]
+	path = submodules/polyscope
+	url = https://github.com/nmwsharp/polyscope.git

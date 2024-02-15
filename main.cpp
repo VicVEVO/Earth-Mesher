@@ -6,6 +6,7 @@
 #include "errorCode.h"
 #include "errorMessages.h"
 
+
 // Function to convert a .csv File into a Eigen Matrix
 Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
     std::ifstream csvData;
@@ -85,23 +86,7 @@ void setPoints(const int n, const Eigen::VectorXf& altitudes, const Eigen::Vecto
     }
 }
 
-void viewPoints(const Eigen::MatrixXd& V, const Eigen::MatrixXd& C) {
-    // Set up the viewer
-    igl::opengl::glfw::Viewer viewer;
 
-    // Set the viewer data
-    viewer.data().set_points(V, C);
-    viewer.data().point_size = 5;
-
-    // Set the background color
-    viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
-
-    // Launch the viewer
-    viewer.launch(false,"Test");
-}
-
-void viewMesh(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) {
-}
 
 /*
 void color(float altitude, float x, float y, float z, int R1, int G1, int B1, int R2, int G2, int B2, int R3, int G3, int B3, int& R, int& G, int& B) {
@@ -127,7 +112,7 @@ void color(float altitude, float x, float y, float z, int R1, int G1, int B1, in
 }
 */
 
-/*
+
 void createSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
     V.resize((N + 1) * (N + 1), 3);
     F.resize(N * N * 2, 3);
@@ -141,6 +126,7 @@ void createSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
         }
     }
 
+    // Populate the face matrix
     for (int i = 0; i < N; ++i) {
         for (int     j = 0; j < N; ++j) {
             int index = i * N + j;
@@ -149,10 +135,10 @@ void createSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
         }
     }
 }
- */
 
-/*
-void createMesh(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
+
+
+void createLines(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
     // Get the number of vertices
     int N = altitudes.rows();
 
@@ -177,42 +163,108 @@ void createMesh(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitud
     }
 
     // Populate the face matrix
-    for (int i = 2; i < N; i++) {
-        F(i-2, 0) = 0;
-        F(i-2, 1) = i-1;
-        F(i-2, 2) = i;
+    for (int i = 0; i < N - 2; ++i) {
+        // Find the three vertices for this triangle
+        int idx1 = i;
+        int idx2 = (i + 1) % (N - 1);
+        int idx3 = (i + 2) % (N - 1) + 1;
+
+        // Compute the latitudes and longitudes of the three vertices
+        double lat1 = latitudes(idx1);
+        double lat2 = latitudes(idx2);
+        double lat3 = latitudes(idx3);
+        double lon1 = longitudes(idx1);
+        double lon2 = longitudes(idx2);
+        double lon3 = longitudes(idx3);
+
+        // Find the nearest vertex for each edge
+        int j1, j2, j3;
+        double min_dist, dist;
+
+        // Edge 1-2
+        j1 = idx2;
+        j2 = idx1;
+        min_dist = std::numeric_limits<double>::max();
+        for (int j = 0; j < N; ++j) {
+            if (j == idx1 || j == idx2) continue;
+            dist = std::abs(latitudes(j) - lat1) + std::abs(longitudes(j) - lon1);
+            if (dist < min_dist) {
+                min_dist = dist;
+                j1 = j;
+            }
+        }
+
+        // Edge 2-3
+        j2 = idx3;
+        min_dist = std::numeric_limits<double>::max();
+        for (int j = 0; j < N; ++j) {
+            if (j == idx2 || j == idx3) continue;
+            dist = std::abs(latitudes(j) - lat2) + std::abs(longitudes(j) - lon2);
+            if (dist < min_dist) {
+                min_dist = dist;
+                j2 = j;
+            }
+        }
+
+        // Edge 3-1
+        j3 = idx1;
+        min_dist = std::numeric_limits<double>::max();
+        for (int j = 0; j < N; ++j) {
+            if (j == idx3 || j == idx1) continue;
+            dist = std::abs(latitudes(j) - lat3) + std::abs(longitudes(j) - lon3);
+            if (dist < min_dist) {
+                min_dist = dist;
+                j3 = j;
+            }
+        }
+
+        // Populate the face matrix
+        F.row(i) << idx1, j1, j3;
     }
 }
-*/
 
-int main(const int argc, const char *argv[]) {
+// Display procedures
 
-    /*
-    std::string csvFile = "/home/vic_pabo/Documents/Earth-Mesher/submodules/NC-Converter/data/csv_files/TP_GPN_2PfP314_006_20010323_223727_20010323_233339.csv";
-    Eigen::MatrixXf dataMat = getMatrixFromCSV(csvFile);
-
-    Eigen::VectorXf altitudes = dataMat.col(0);
-    Eigen::VectorXf latitudes = dataMat.col(1);
-    Eigen::VectorXf longitudes = dataMat.col(2);
-
-
-    Eigen::MatrixXd V;
-    Eigen::MatrixXi F;
-
-    //setPoints(altitudes, latitudes, longitudes);
-
-    //createMesh(altitudes, latitudes, longitudes, V, F);
-
-    //createSphere(100,V,F);
-
-
+void viewPoints(const Eigen::MatrixXd& V, const Eigen::MatrixXd& C) {
     // Set up the viewer
     igl::opengl::glfw::Viewer viewer;
-    viewer.data().set_mesh(V, F);
+
+    // Set the viewer data
+    viewer.data().set_points(V, C);
+    viewer.data().point_size = 5;
+
+    // Set the background color
+    viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
 
     // Launch the viewer
-    viewer.launch(false,"Test");
-*/
+    viewer.launch(false,"Example window with lines");
+}
+
+
+void viewMesh(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) {
+    // Set up the viewer
+    igl::opengl::glfw::Viewer viewer;
+
+    // Set the viewer data
+    viewer.data().set_mesh(V, F);
+
+    // Set the background color
+    viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
+
+    // Set the colors
+    Eigen::MatrixXd C(V.rows(), 3);
+    C.setConstant(255);
+    viewer.data().set_colors(C);
+
+    // Disable the lines
+    viewer.data().show_lines = false;
+
+    // Launch the viewer
+    viewer.launch(false,"Example window with lines");
+}
+
+
+int main(const int argc, const char *argv[]) {
     // To unmute
     try {
         if (argc == 1 | argc == 2) {
@@ -244,11 +296,16 @@ int main(const int argc, const char *argv[]) {
             // Display data
             viewPoints(V, C);
         } else {
-            Eigen::MatrixXd V(n, 3);;
-            Eigen::MatrixXi F(n, 3);;
+            Eigen::MatrixXd V;
+            Eigen::MatrixXi F;
+
+            //createLines(altitudes, latitudes, longitudes, V, F);
+
+            createSphere(100,V,F);
+
+            viewMesh(V,F);
 
             // Display data
-            viewMesh(V, F);
         }
     }
 
@@ -256,3 +313,4 @@ int main(const int argc, const char *argv[]) {
         std::cerr << errorMessages.at(errorCode) << std::endl;
     }
 }
+
