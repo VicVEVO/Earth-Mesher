@@ -23,7 +23,7 @@ Using satellite data, create a comprehensive 3D visualization of Earth's measure
 
 This should find and build the dependencies and create a `render` binary. Then, **run** it for a render with points (-P) or a mesh (-S):
 
-    ./render -P (or -S) <FILEPATH/file.csv>
+    ./render -P (or -L, -S) <FILEPATH/file.csv>
 
 ## Dependencies
 
