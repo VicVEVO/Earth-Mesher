@@ -2,12 +2,13 @@
 181	281	1707248777229031336	_deps/glfw-build/src/CMakeFiles/glfw.dir/linux_joystick.c.o	3d98444274f7ba4f
 1	225	1707248777173031538	_deps/glfw-build/src/CMakeFiles/glfw.dir/input.c.o	e7f2661ae519286e
 8	288	1707248777237031307	_deps/glfw-build/src/CMakeFiles/glfw.dir/x11_window.c.o	86d111e140683268
-1	16049	1707998983295793784	CMakeFiles/render.dir/main.cpp.o	e56fe41f8053554e
+2	15890	1708004441345936292	CMakeFiles/render.dir/main.cpp.o	e56fe41f8053554e
 113	177	1707248777125031712	_deps/glfw-build/src/CMakeFiles/glfw.dir/xkb_unicode.c.o	4e76abff370a4073
 293	298	1707248777249031263	_deps/glad-build/libglad.a	de91e2e14d6ddf0e
 114	205	1707248777153031611	_deps/glfw-build/src/CMakeFiles/glfw.dir/posix_time.c.o	5d75c030601b9f63
+0	246	1708088751698423740	build.ninja	d730651318f7b34c
 139	268	1707248777217031379	_deps/glfw-build/src/CMakeFiles/glfw.dir/egl_context.c.o	f82b85d477ec0830
-16049	16745	1707998984023735230	render	3ec9ff73f9d7e33e
+15890	16460	1708004441941934615	render	32a4a4c806bb8494
 138	237	1707248777185031495	_deps/glfw-build/src/CMakeFiles/glfw.dir/glx_context.c.o	d4a7de24ac3b74fd
 118	194	1707248777145031640	_deps/glfw-build/src/CMakeFiles/glfw.dir/posix_thread.c.o	eada9cc9a377aa4f
 1	12582	1707997887874223122	CMakeFiles/render.dir/test.cpp.o	b43b1d324e015fa6
@@ -21,6 +22,3 @@
 194	293	1707248777241031292	_deps/glad-build/CMakeFiles/glad.dir/src/glad.c.o	9a471aa8b14ba51e
 3	181	1707248777129031699	_deps/glfw-build/src/CMakeFiles/glfw.dir/window.c.o	3dc96fb1e32fbab1
 3	207	1707248777157031597	_deps/glfw-build/src/CMakeFiles/glfw.dir/x11_init.c.o	9f4b86a3dccb32dd
-0	246	1708004425473981308	build.ninja	d730651318f7b34c
-2	15890	1708004441345936292	CMakeFiles/render.dir/main.cpp.o	e56fe41f8053554e
-15890	16460	1708004441941934615	render	32a4a4c806bb8494

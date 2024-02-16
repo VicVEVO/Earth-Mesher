@@ -16,6 +16,6 @@ CMake Deprecation Warning at cmake-build-debug/_deps/glad-src/CMakeLists.txt:1 (
   CMake that the project does not need compatibility with older versions.
 
 
--- Configuring done (0.2s)
+-- Configuring done (0.9s)
 -- Generating done (0.0s)
 -- Build files have been written to: /home/vic_pabo/Documents/Earth-Mesher/cmake-build-debug

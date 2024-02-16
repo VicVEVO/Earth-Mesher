@@ -5,6 +5,7 @@
 #include <igl/opengl/glfw/Viewer.h>
 #include "errorCode.h"
 #include "errorMessages.h"
+#include "constants.h"
 
 
 // Function to convert a .csv File into a Eigen Matrix
@@ -21,7 +22,7 @@ Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
     }
 
     int nbFields = int(std::count(lineRead.begin(), lineRead.end(), ',')) + 1;
-    if (nbFields < 3){
+    if (nbFields < NUMBER_FIELDS_MIN){
         throw ErrorCode::NotEnoughFields;
     }
     int nbMeasurements = 0;
@@ -80,16 +81,13 @@ void setPoints(const int n, const Eigen::VectorXf& altitudes, const Eigen::Vecto
         V.row(i) = (altitudes(i)/1356038) * Eigen::Vector3d(x, y, z);
 
         // Set colors for visualization
-        C(i, 0) = 255;
-        C(i, 1) = 255;
-        C(i, 2) = 255;
+        C(i, ALTITUDE_FIELD_INDEX) = MAX_COLOR;
+        C(i, LATITUDE_FIELD_INDEX) = MAX_COLOR;
+        C(i, LONGITUDE_FIELD_INDEX) = MAX_COLOR;
     }
 }
 
-
-
-/*
-void color(float altitude, float x, float y, float z, int R1, int G1, int B1, int R2, int G2, int B2, int R3, int G3, int B3, int& R, int& G, int& B) {
+void color(const float altitude, const float x, const float y, const float z, const int R1, const int G1, const int B1, const int R2, const int G2, const int B2, const int R3, const int G3, const int B3, int& R, int& G, int& B) {
     if (altitude <= x) {
         R = R1;
         G = G1;
@@ -110,12 +108,23 @@ void color(float altitude, float x, float y, float z, int R1, int G1, int B1, in
         B = B3;
     }
 }
-*/
 
+void createColorSphere(int N, Eigen::VectorXf& altitudes, Eigen::VectorXf& latitudes, Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::MatrixXd& C) {
+    // Initialisation of the colors of the triangles
+    int R,G,B;
 
-void colorizeSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::MatrixXd& C) {
-    V.resize((N + 1) * (N + 1), 3);
-    F.resize(N * N * 2, 3);
+    // Initialisation of the level of a triangle
+    float level;
+
+    // Levels normalization
+    Eigen::VectorXf levelsNormalized = altitudes.array() - altitudes.minCoeff();
+    float levelsNormalizedMin = levelsNormalized.minCoeff();
+    float levelsNormalizedMax = levelsNormalized.maxCoeff();
+    levelsNormalized /= levelsNormalizedMax;
+
+    V.resize((N + 1) * (N + 1), NUMBER_FIELDS);
+    C.resize((N + 1) * (N + 1), NUMBER_FIELDS);
+    F.resize(N * N * 2, NUMBER_FIELDS);
 
     for (int i = 0; i <= N; ++i) {
         for (int j = 0; j <= N; ++j) {
@@ -124,20 +133,26 @@ void colorizeSphere(int N, Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::Matrix
 
             V.row(i * (N + 1) + j) << std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi);
 
-            // Recent
+            // Find the level corresponding to i*(N+1)*j
+            // NOT DONE YET !!!!
 
+            // Colorize the triangle
+            color(level, levelsNormalizedMin, (levelsNormalizedMin+levelsNormalizedMax)/2, levelsNormalizedMax, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, R, G, B);
+            C.row(i * (N + 1) + j) << R, G, B;
+
+            /*
             if (phi > 0.1 * M_PI && phi < 0.4 * M_PI && theta > 0.1 * 2.0 * M_PI && theta < 0.4 * 2.0 * M_PI) {
-                C.row((i * (N + 1) + j)%N) << 255, 0, 0;
+                C.row(i * (N + 1) + j) << MAX_COLOR, MAX_COLOR, MAX_COLOR;
             } else {
-                C.row((i * (N + 1) + j)%N) << 0, 255, 0;
+                C.row(i * (N + 1) + j) << MAX_COLOR, MIN_COLOR, MIN_COLOR;
             }
-
+             */
         }
     }
 
     // Populate the face matrix
     for (int i = 0; i < N; ++i) {
-        for (int     j = 0; j < N; ++j) {
+        for (int j = 0; j < N; ++j) {
             int index = i * N + j;
             F.row(2 * index) << i * (N + 1) + j, (i + 1) * (N + 1) + j, i * (N + 1) + j + 1;
             F.row(2 * index + 1) << (i + 1) * (N + 1) + j, (i + 1) * (N + 1) + j + 1, i * (N + 1) + j + 1;
@@ -160,9 +175,9 @@ void createLines(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitu
         double z = cos(phi);
 
         // Store the spherical coordinates in the vertex matrix
-        V(i, 0) = x;
-        V(i, 1) = y;
-        V(i, 2) = z;
+        V(i, ALTITUDE_FIELD_INDEX) = x;
+        V(i, LATITUDE_FIELD_INDEX) = y;
+        V(i, LONGITUDE_FIELD_INDEX) = z;
     }
 
     // Populate the face matrix
@@ -234,37 +249,15 @@ void viewPoints(const Eigen::MatrixXd& V, const Eigen::MatrixXd& C) {
 
     // Set the viewer data
     viewer.data().set_points(V, C);
-    viewer.data().point_size = 5;
+    viewer.data().point_size = POINT_SIZE;
 
     // Set the background color
-    viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
+    viewer.core().background_color = Eigen::Vector4f(MIN_COLOR, MIN_COLOR, MIN_COLOR, ALPHA_VALUE);
 
     // Launch the viewer
     viewer.launch(false,"Example window with lines");
 }
 
-
-void viewMesh(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) {
-    // Set up the viewer
-    igl::opengl::glfw::Viewer viewer;
-
-    // Set the viewer data
-    viewer.data().set_mesh(V, F);
-
-    // Set the background color
-    viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
-
-    // Set the colors
-    Eigen::MatrixXd C(V.rows(), 3);
-    C.setConstant(255);
-    viewer.data().set_colors(C);
-
-    // Disable the lines view by default
-    viewer.data().show_lines = false;
-
-    // Launch the viewer
-    viewer.launch(false,"Example window with lines");
-}
 
 void viewMeshColor(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const Eigen::MatrixXd& C) {
 
@@ -275,7 +268,7 @@ void viewMeshColor(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const Eig
     viewer.data().set_mesh(V, F);
 
     // Set the background color
-    viewer.core().background_color = Eigen::Vector4f(0, 0, 0, 1);
+    viewer.core().background_color = Eigen::Vector4f(MIN_COLOR, MIN_COLOR, MIN_COLOR, ALPHA_VALUE);
 
     // Set the colors
     viewer.data().set_colors(C);
@@ -287,33 +280,32 @@ void viewMeshColor(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const Eig
     viewer.launch(false,"Example window with lines");
 }
 
-// Main procedure
+// Main program
 
 int main(const int argc, const char *argv[]) {
-    // To unmute
     try {
-        if (argc == 1 | argc == 2) {
+        if (argc < NUMBER_ARGS_MIN) {
             throw ErrorCode::NotEnoughArguments;
         }
 
         // Get the plot type and CSV file name from the command-line arguments
-        std::string plotType = argv[1];
-        std::string csvFile = argv[2];
+        std::string plotType = argv[PLOT_TYPE_INDEX];
+        std::string csvFile = argv[CSV_FILE_INDEX];
 
         // Read the matrix from the CSV file
         Eigen::MatrixXf dataMat = getMatrixFromCSV(csvFile);
 
         // Extract the altitudes, latitudes, and longitudes from the matrix
-        Eigen::VectorXf altitudes = dataMat.col(0);
-        Eigen::VectorXf latitudes = dataMat.col(1);
-        Eigen::VectorXf longitudes = dataMat.col(2);
+        Eigen::VectorXf altitudes = dataMat.col(ALTITUDE_FIELD_INDEX);
+        Eigen::VectorXf latitudes = dataMat.col(LATITUDE_FIELD_INDEX);
+        Eigen::VectorXf longitudes = dataMat.col(LONGITUDE_FIELD_INDEX);
 
         // Extract the size of the data set
         int n = altitudes.size();
 
         // Create matrices to store the coordinates and colors of the points
-        Eigen::MatrixXd V(n, 3);
-        Eigen::MatrixXd C(n, 3);
+        Eigen::MatrixXd V(n, NUMBER_FIELDS);
+        Eigen::MatrixXd C(n, NUMBER_FIELDS);
 
         if (plotType == "-P") {
             setPoints(n, altitudes, latitudes, longitudes, V, C);
@@ -323,13 +315,13 @@ int main(const int argc, const char *argv[]) {
 
         } else {
             // Create a matrix to store triangle connectives
-            Eigen::MatrixXi F(n-2,3);
+            Eigen::MatrixXi F(n-2,NUMBER_FIELDS);
 
             if (plotType == "-L") {
                 createLines(altitudes, latitudes, longitudes, V, F);
-                C.setConstant(255);
+                C.setConstant(MAX_COLOR);
             } else {
-                colorizeSphere(100,V,F,C);
+                createColorSphere(SPHERE_RESOLUTION, altitudes, latitudes, longitudes, V, F, C);
             }
 
             // Display data
@@ -340,5 +332,4 @@ int main(const int argc, const char *argv[]) {
     catch(const ErrorCode& errorCode) {
         std::cerr << errorMessages.at(errorCode) << std::endl;
     }
-
 }
