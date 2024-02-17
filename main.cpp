@@ -26,16 +26,21 @@ Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
         throw ErrorCode::FileNotFound;
     }
 
+    // Checking if there are anough fields for the display
     int nbFields = int(std::count(lineRead.begin(), lineRead.end(), ',')) + 1;
     if (nbFields < NUMBER_FIELDS_MIN){
         throw ErrorCode::NotEnoughFields;
     }
+
+    // Initialisation of the matrix
     int nbMeasurements = 0;
     Eigen::MatrixXf matrix(nbMeasurements, nbFields);
 
-    int indexDataField; // number of the current column studied in lineRead
-    bool nullData = false; // Is the data equal to zero at a certain point in time?
-    float precision = 1e-6; // precision of floats
+    // Number of the current column studied in lineRead
+    int indexDataField;
+
+    // Is the data equal to zero at a certain point in time?
+    bool nullData = false;
 
     // Read each line
     while (std::getline(csvData, lineRead)) {
@@ -56,10 +61,10 @@ Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
         matrix(nbMeasurements-1,indexDataField) = std::stof(token);
 
         // Verification if null values
-        if (abs(matrix(nbMeasurements-1,indexDataField)) < precision) {
+        if (abs(matrix(nbMeasurements-1,indexDataField)) < FLOAT_PRECISION) {
             nullData = true;
             for (int i=0 ; i < nbFields; i++) {
-                if (abs(matrix(nbMeasurements-1,i)) > precision) {
+                if (abs(matrix(nbMeasurements-1,i)) > FLOAT_PRECISION) {
                     nullData = false;
                 }
             }
@@ -91,7 +96,7 @@ void setPoints(const int n, const Eigen::VectorXf& levels, const Eigen::VectorXf
         double x = sin(phi) * cos(theta);
         double y = sin(phi) * sin(theta);
         double z = cos(phi);
-        std::cout << "bruh" << std::endl;
+
         V.row(i) = (levels(i)/levelMax) * Eigen::Vector3d(x, y, z);
 
         // Set colors for visualization
@@ -99,8 +104,6 @@ void setPoints(const int n, const Eigen::VectorXf& levels, const Eigen::VectorXf
         C(i, LATITUDE_FIELD_INDEX) = MAX_COLOR;
         C(i, LONGITUDE_FIELD_INDEX) = MAX_COLOR;
     }
-
-
 }
 
 /**
@@ -167,13 +170,14 @@ void createColorSphere(int N, Eigen::VectorXf& measures, Eigen::VectorXf& latitu
     // Triangle measure initialisation
     float measure;
 
-    // measures normalization
+    // Measures normalization
     Eigen::VectorXf measuresNormalized = measures.array() - measures.minCoeff();
     float measuresNormalizedMax = measuresNormalized.maxCoeff();
     measuresNormalized /= measuresNormalizedMax;
     measuresNormalizedMax = measuresNormalized.maxCoeff();
     float measuresNormalizedMin = measuresNormalized.minCoeff();
 
+    // Resize the matrices
     V.resize((N + 1) * (N + 1), NUMBER_FIELDS);
     C.resize((N + 1) * (N + 1), NUMBER_FIELDS);
     F.resize(N * N * 2, NUMBER_FIELDS);
@@ -207,7 +211,13 @@ void createColorSphere(int N, Eigen::VectorXf& measures, Eigen::VectorXf& latitu
     }
 }
 
-
+/**
+ * Creates the line mesh from the measures (points in 3D) by linking them.
+ *
+ * @param measures, latitudes, longitudes The data triplets that reconstruct 3D points.
+ * @param V, F The matrices storing respectively the indices of the rows and the triangle connectivty.
+ * @see https://libigl.github.io/tutorial/
+ */
 void createLines(const Eigen::VectorXf& measures, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
     // Get the number of vertices
     int N = measures.rows();
@@ -290,6 +300,12 @@ void createLines(const Eigen::VectorXf& measures, const Eigen::VectorXf& latitud
 
 // Display procedures
 
+/**
+ * Display points in 3D.
+ *
+ * @param V The matrix storing the coordinates of the vertices.
+ * @param C The matrix corresponding to the color of each point.
+ */
 void viewPoints(const Eigen::MatrixXd& V, const Eigen::MatrixXd& C) {
     // Set up the viewer
     igl::opengl::glfw::Viewer viewer;
@@ -305,7 +321,12 @@ void viewPoints(const Eigen::MatrixXd& V, const Eigen::MatrixXd& C) {
     viewer.launch(false,"Example window with lines");
 }
 
-
+/**
+ * Display a figure in 3D.
+ *
+ * @param V, F The matrices storing respectively the indices of the rows and the triangle connectivty.
+ * @param C The matrix corresponding to the color of each triangle.
+ */
 void viewMeshColor(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const Eigen::MatrixXd& C) {
 
     // Set up the viewer
