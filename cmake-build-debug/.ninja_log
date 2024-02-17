@@ -22,3 +22,5 @@
 194	293	1707248777241031292	_deps/glad-build/CMakeFiles/glad.dir/src/glad.c.o	9a471aa8b14ba51e
 3	181	1707248777129031699	_deps/glfw-build/src/CMakeFiles/glfw.dir/window.c.o	3dc96fb1e32fbab1
 3	207	1707248777157031597	_deps/glfw-build/src/CMakeFiles/glfw.dir/x11_init.c.o	9f4b86a3dccb32dd
+1	19076	1708211025291867065	CMakeFiles/render.dir/main.cpp.o	e56fe41f8053554e
+19076	20009	1708211026263833404	render	32a4a4c806bb8494

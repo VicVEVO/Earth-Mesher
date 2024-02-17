@@ -7,8 +7,13 @@
 #include "errorMessages.h"
 #include "constants.h"
 
-
-// Function to convert a .csv File into a Eigen Matrix
+/**
+ * Converts a .csv File into a Eigen Matrix
+ *
+ * @param csvFile The file -in a Comma-Separated Values format- to convert.
+ *
+ * @return The eigen matrix corresponding to the .csv file.
+ */
 Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
     std::ifstream csvData;
     csvData.open(csvFile);
@@ -67,8 +72,16 @@ Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
     return matrix;
 }
 
-// Function to create a sphere with vertices and faces based on altitude, latitude, and longitude
-void setPoints(const int n, const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXd& C) {
+/**
+ * Creates a sphere with vertices and faces based on measures according latitude, and longitude
+ *
+ * @param n The
+ * @param measures, latitudes, longitudes The
+ * @param V, C The
+ */
+void setPoints(const int n, const Eigen::VectorXf& levels, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXd& C) {
+
+    double levelMax = levels.maxCoeff();
 
     // Fill the matrices with data
     for (int i = 0; i < n; ++i) {
@@ -78,38 +91,56 @@ void setPoints(const int n, const Eigen::VectorXf& altitudes, const Eigen::Vecto
         double x = sin(phi) * cos(theta);
         double y = sin(phi) * sin(theta);
         double z = cos(phi);
-        V.row(i) = (altitudes(i)/1356038) * Eigen::Vector3d(x, y, z);
+        std::cout << "bruh" << std::endl;
+        V.row(i) = (levels(i)/levelMax) * Eigen::Vector3d(x, y, z);
 
         // Set colors for visualization
-        C(i, ALTITUDE_FIELD_INDEX) = MAX_COLOR;
+        C(i, VIEW_FIELD_INDEX) = MAX_COLOR;
         C(i, LATITUDE_FIELD_INDEX) = MAX_COLOR;
         C(i, LONGITUDE_FIELD_INDEX) = MAX_COLOR;
     }
+
+
 }
 
-void color(const float altitude, const float x, const float y, const float z, const int R1, const int G1, const int B1, const int R2, const int G2, const int B2, const int R3, const int G3, const int B3, int& R, int& G, int& B) {
-    if (altitude <= x) {
-        R = R1;
-        G = G1;
-        B = B1;
-    } else if (altitude <= y) {
-        float t = (altitude - x) / (y - x);
-        R = R1 + t * (R2 - R1);
-        G = G1 + t * (G2 - G1);
-        B = B1 + t * (B2 - B1);
-    } else if (altitude <= z) {
-        float t = (altitude - y) / (z - y);
-        R = R2 + t * (R3 - R2);
-        G = G2 + t * (G3 - G2);
-        B = B2 + t * (B3 - B2);
+/**
+ * Associates a color (R,G,B) to a measure according to the colors associated with the extreme and average values.
+ *
+ * @param measure The measure itself
+ * @param minV, avgV, maxV The minimal, average and maximal values to identify the color of the measure
+ * @param Rmin, Gmin, Bmin, Ravg, Gavg, Bavg, Rmax, Gmax, Bmax The colors associated with the boundary values
+ */
+void color(const float measure, const float minV, const float avgV, const float maxV, const int Rmin, const int Gmin, const int Bmin, const int Ravg, const int Gavg, const int Bavg, const int Rmax, const int Gmax, const int Bmax, int& R, int& G, int& B) {
+    if (measure <= minV) {
+        R = Rmin;
+        G = Gmin;
+        B = Bmin;
+    } else if (measure <= avgV) {
+        float t = (measure - minV) / (avgV - minV);
+        R = Rmin + t * (Ravg - Rmin);
+        G = Gmin + t * (Gavg - Gmin);
+        B = Bmin + t * (Bavg - Bmin);
+    } else if (measure <= maxV) {
+        float t = (measure - avgV) / (maxV - avgV);
+        R = Ravg + t * (Rmax - Ravg);
+        G = Gavg + t * (Gmax - Gavg);
+        B = Bavg + t * (Bmax - Bavg);
     } else {
-        R = R3;
-        G = G3;
-        B = B3;
+        R = Rmax;
+        G = Gmax;
+        B = Bmax;
     }
 }
 
-int indicePlusProche(float latitude, float longitude, Eigen::VectorXf& latitudes, Eigen::VectorXf& longitudes) {
+/**
+ * Indicates the nearest index for the (latitude,longitude) coordinates in a given sphere that fits with the latitudes and longitudes data.
+ *
+ * @param latitude, longitude The latitude and longitude to associate with an index.
+ * @param latitudes, longitudes The measures of latitude and longitude.
+ *
+ * @return The index associated with the best fit
+ */
+int nearestIndexforCoords(float latitude, float longitude, Eigen::VectorXf& latitudes, Eigen::VectorXf& longitudes) {
     float distanceMin = (latitudes(0) - latitude) * (latitudes(0) - latitude) + (longitudes(0) - longitude)*(longitudes(0) - longitude);
     int indiceMin = 0;
     for (int i = 1; i < latitudes.size(); i++) {
@@ -121,19 +152,27 @@ int indicePlusProche(float latitude, float longitude, Eigen::VectorXf& latitudes
     return indiceMin;
 }
 
-void createColorSphere(int N, Eigen::VectorXf& altitudes, Eigen::VectorXf& latitudes, Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::MatrixXd& C) {
+/**
+ * Creates a triangular mesh of a sphere with colored triangles.
+ *
+ * @param latitude, longitude The latitude and longitude to associate with an index.
+ * @param latitudes, longitudes The measures of latitude and longitude.
+ *
+ * @return The index associated with the best fit.
+ */
+void createColorSphere(int N, Eigen::VectorXf& measures, Eigen::VectorXf& latitudes, Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::MatrixXd& C) {
     // Triangle colors initialisation
     int R,G,B;
 
-    // Triangle level initialisation
-    float level;
+    // Triangle measure initialisation
+    float measure;
 
-    // Levels normalization
-    Eigen::VectorXf levelsNormalized = altitudes.array() - altitudes.minCoeff();
-    float levelsNormalizedMax = levelsNormalized.maxCoeff();
-    levelsNormalized /= levelsNormalizedMax;
-    levelsNormalizedMax = levelsNormalized.maxCoeff();
-    float levelsNormalizedMin = levelsNormalized.minCoeff();
+    // measures normalization
+    Eigen::VectorXf measuresNormalized = measures.array() - measures.minCoeff();
+    float measuresNormalizedMax = measuresNormalized.maxCoeff();
+    measuresNormalized /= measuresNormalizedMax;
+    measuresNormalizedMax = measuresNormalized.maxCoeff();
+    float measuresNormalizedMin = measuresNormalized.minCoeff();
 
     V.resize((N + 1) * (N + 1), NUMBER_FIELDS);
     C.resize((N + 1) * (N + 1), NUMBER_FIELDS);
@@ -146,13 +185,13 @@ void createColorSphere(int N, Eigen::VectorXf& altitudes, Eigen::VectorXf& latit
 
             V.row(i * (N + 1) + j) << std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi);
 
-            // Find the level corresponding to i*(N+1)*j
-            level = levelsNormalized(indicePlusProche(360*theta/(2.0*M_PI), 90 + 180*phi/M_PI, latitudes, longitudes));
-            std::cout << level << " " << levelsNormalizedMin << " " << levelsNormalizedMax <<  " " << std::endl;
+            // Find the measure corresponding to i*(N+1)*j
+            measure = measuresNormalized(nearestIndexforCoords(360*theta/(2.0*M_PI), 90 + 180*phi/M_PI, latitudes, longitudes));
+            //std::cout << measure << " " << measuresNormalizedMin << " " << measuresNormalizedMax <<  " " << std::endl;
             //std::cout << theta << " " << phi << std::endl;
 
             // Colorize the triangle
-            color(level, levelsNormalizedMin, 0.89, levelsNormalizedMax, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, R, G, B);
+            color(measure, measuresNormalizedMin, 0.89, measuresNormalizedMax, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, R, G, B);
             C.row(i * (N + 1) + j) << R, G, B;
 
         }
@@ -169,9 +208,9 @@ void createColorSphere(int N, Eigen::VectorXf& altitudes, Eigen::VectorXf& latit
 }
 
 
-void createLines(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
+void createLines(const Eigen::VectorXf& measures, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F) {
     // Get the number of vertices
-    int N = altitudes.rows();
+    int N = measures.rows();
 
     // Populate the vertex matrix
     for (int i = 0; i < N; i++) {
@@ -183,7 +222,7 @@ void createLines(const Eigen::VectorXf& altitudes, const Eigen::VectorXf& latitu
         double z = cos(phi);
 
         // Store the spherical coordinates in the vertex matrix
-        V(i, ALTITUDE_FIELD_INDEX) = x;
+        V(i, VIEW_FIELD_INDEX) = x;
         V(i, LATITUDE_FIELD_INDEX) = y;
         V(i, LONGITUDE_FIELD_INDEX) = z;
     }
@@ -303,20 +342,20 @@ int main(const int argc, const char *argv[]) {
         // Read the matrix from the CSV file
         Eigen::MatrixXf dataMat = getMatrixFromCSV(csvFile);
 
-        // Extract the altitudes, latitudes, and longitudes from the matrix
-        Eigen::VectorXf altitudes = dataMat.col(ALTITUDE_FIELD_INDEX);
+        // Extract the measures, latitudes, and longitudes from the matrix
+        Eigen::VectorXf measures = dataMat.col(MEASURE_FIELD_INDEX);
         Eigen::VectorXf latitudes = dataMat.col(LATITUDE_FIELD_INDEX);
         Eigen::VectorXf longitudes = dataMat.col(LONGITUDE_FIELD_INDEX);
 
         // Extract the size of the data set
-        int n = altitudes.size();
+        int n = measures.size();
 
         // Create matrices to store the coordinates and colors of the points
         Eigen::MatrixXd V(n, NUMBER_FIELDS);
         Eigen::MatrixXd C(n, NUMBER_FIELDS);
 
         if (plotType == "-P") {
-            setPoints(n, altitudes, latitudes, longitudes, V, C);
+            setPoints(n, measures, latitudes, longitudes, V, C);
 
             // Display data
             viewPoints(V, C);
@@ -326,10 +365,10 @@ int main(const int argc, const char *argv[]) {
             Eigen::MatrixXi F(n-2,NUMBER_FIELDS);
 
             if (plotType == "-L") {
-                createLines(altitudes, latitudes, longitudes, V, F);
+                createLines(measures, latitudes, longitudes, V, F);
                 C.setConstant(MAX_COLOR);
             } else {
-                createColorSphere(SPHERE_RESOLUTION, altitudes, latitudes, longitudes, V, F, C);
+                createColorSphere(SPHERE_RESOLUTION, measures, latitudes, longitudes, V, F, C);
             }
 
             // Display data
