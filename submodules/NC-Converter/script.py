@@ -5,6 +5,26 @@ import sys
 import pandas as pd
 import numpy as np
 
+### Function to name the output file in order not to erase them, and create v0, v1, ..
+
+def fileName(name: str, folder: str) -> str:
+    # List of every file in the folder
+    files = os.listdir(folder)
+
+    # If the file has never been rendered, name it simply
+    if not (name + ".csv" in files):
+        return name
+
+    # Count the number of files with the same name
+    derived_files = {file for file in files if file.startswith(name)}
+
+    count = 1
+    while (name + "_v" + str(count) + ".csv") in derived_files:
+        count += 1
+    
+    # Return New file name creation
+    return f"{name}_v{count}"
+
 ### Parameters analysis
 
 args = sys.argv
@@ -43,7 +63,8 @@ print("\nProcessing to csv...\n")
 useSpecificdata = option != "--alldata"
 
 for i in range(len(datasets)):
-    output_filename = f"{output_path}{files[i][:-3]}.csv"
+    name_file = fileName(files[i][:-3],output_path)
+    output_filename = f"{output_path}{name_file}.csv"
 
     # Empty DataFrame creation to stock all the variables
     all_variables_df = pd.DataFrame()
@@ -75,5 +96,5 @@ for i in range(len(datasets)):
     
     # Writing the final dataframe in a .csv file
     all_variables_df.to_csv(output_filename, index=False)
-    print(f"{files[i][:-3]}.csv is rendered.")
+    print(f"{name_file}.csv is rendered.")
 
