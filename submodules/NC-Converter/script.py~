@@ -16,7 +16,7 @@ else:
     option = args[1]
 
     if option == "-h" or option == "--help":
-        print("Usage: python3 script.py <option>\nSupported options include:\n\n--alldata \n     To keep all fields and just convert the file.\n\n--data <field1> <field2> ...\n     Specity the data to keep after the conversion.\n     >> python3 script.py temperature latitude (to keep only the temperature and latitude measurements)\n\n--fields\n     Show the different fields of the database.\n\n--help\n     Show publicly available flags.\n")
+        print("Usage: python3 script.py <option>\nSupported options include:\n\n--alldata \n     To keep all fields and just convert the file.\n\n--data <field1> <field2> ...\n     Specity the data to keep after the conversion.\n          >> python3 script.py temperature latitude (to keep only the temperature and latitude measurements)\n\n--fields\n     Show the different fields of the database.\n\n--help\n     Show publicly available flags.\n")
     else:
         parent_dir = os.getcwd()
         file_path = os.path.join(parent_dir, 'data/nc_files/')
