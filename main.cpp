@@ -109,12 +109,27 @@ void color(const float altitude, const float x, const float y, const float z, co
     }
 }
 
+int indicePlusProche(float latitude, float longitude, Eigen::VectorXf& latitudes, Eigen::VectorXf& longitudes) {
+    float distanceMin = (latitudes(0) - latitude) * (latitudes(0) - latitude) + (longitudes(0) - longitude)*(longitudes(0) - longitude);
+    int indiceMin = 0;
+    for (int i = 1; i < latitudes.size(); i++) {
+        if ((latitudes(i) - latitude) * (latitudes(i) - latitude) + (longitudes(i) - longitude)*(longitudes(i) - longitude) < distanceMin ) {
+            distanceMin = (latitudes(i) - latitude) * (latitudes(i) - latitude) + (longitudes(i) - longitude)*(longitudes(i) - longitude);
+            indiceMin = i;
+        }
+    }
+    return indiceMin;
+}
+
 void createColorSphere(int N, Eigen::VectorXf& altitudes, Eigen::VectorXf& latitudes, Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::MatrixXd& C) {
     // Initialisation of the colors of the triangles
     int R,G,B;
 
     // Initialisation of the level of a triangle
     float level;
+
+    //std::cout << latitudes << std::endl; entre 0 et 360
+    //std::cout << longitudes << std::endl; entre -90 et 90
 
     // Levels normalization
     Eigen::VectorXf levelsNormalized = altitudes.array() - altitudes.minCoeff();
@@ -128,13 +143,16 @@ void createColorSphere(int N, Eigen::VectorXf& altitudes, Eigen::VectorXf& latit
 
     for (int i = 0; i <= N; ++i) {
         for (int j = 0; j <= N; ++j) {
-            double theta = 2.0 * M_PI * static_cast<double>(i) / static_cast<double>(N);
-            double phi = M_PI * static_cast<double>(j) / static_cast<double>(N);
+            double theta = 2.0 * M_PI * static_cast<double>(i) / static_cast<double>(N); // entre 0 et 2 PI
+            double phi = M_PI * static_cast<double>(j) / static_cast<double>(N); // entre 0 et PI
 
             V.row(i * (N + 1) + j) << std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi);
 
             // Find the level corresponding to i*(N+1)*j
-            // NOT DONE YET !!!!
+            level = indicePlusProche(360*theta/(2.0*M_PI), 90 + 180*phi/M_PI, latitudes, longitudes);
+            //std::cout << indicePlusProche(360*theta/(2.0*M_PI), 90 + 180*phi/M_PI, latitudes, longitudes) << std::endl;
+            //std::cout << latitudes.size() << std::endl;
+            //std::cout << theta << " " << phi << std::endl;
 
             // Colorize the triangle
             color(level, levelsNormalizedMin, (levelsNormalizedMin+levelsNormalizedMax)/2, levelsNormalizedMax, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, R, G, B);
