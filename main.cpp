@@ -1,6 +1,8 @@
 /**
  *  Project description (bruh)
  *
+ *  @TODO Voir unités des données d'entrée pour bien les représenter (aucun sens actuellement)
+ *
  */
 #include <igl/opengl/glfw/Viewer.h>
 #include "errorCode.h"

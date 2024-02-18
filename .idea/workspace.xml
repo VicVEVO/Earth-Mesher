@@ -27,6 +27,8 @@
   <component name="ChangeListManager">
     <list default="true" id="20ce8156-7237-46f8-86b4-16970aa2931e" name="Changes" comment="Addition of matrixFromCSV">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constants.h" beforeDir="false" afterPath="$PROJECT_DIR$/constants.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -156,7 +158,8 @@
       <workItem from="1708088749717" duration="5908000" />
       <workItem from="1708176912445" duration="849000" />
       <workItem from="1708177886676" duration="1887000" />
-      <workItem from="1708203172007" duration="10598000" />
+      <workItem from="1708203172007" duration="10711000" />
+      <workItem from="1708250222512" duration="793000" />
     </task>
     <servers />
   </component>
