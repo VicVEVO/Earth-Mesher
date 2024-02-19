@@ -89,17 +89,20 @@ Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
 void setPoints(const int n, const Eigen::VectorXf& levels, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXd& C) {
 
     double levelMax = levels.maxCoeff();
+    double correctedLatitude, correctedLongitude;
 
     // Fill the matrices with data
     for (int i = 0; i < n; ++i) {
-        double theta = longitudes(i) + M_PI/2;
-        double phi = latitudes(i);
 
-        double x = sin(phi) * cos(theta);
-        double y = sin(phi) * sin(theta);
-        double z = cos(phi);
+        // Conversion in radians
+        correctedLatitude = latitudes(i)*M_PI/180;
+        correctedLongitude = longitudes(i)*M_PI/180;
 
-        V.row(i) = (levels(i)/levelMax) * Eigen::Vector3d(x, y, z);
+        double x = cos(correctedLatitude) * cos(correctedLongitude);
+        double y = cos(correctedLatitude) * sin(correctedLongitude);
+        double z = sin(correctedLatitude);
+
+        V.row(i) = Eigen::Vector3d(x, y, z);//(levels(i)/levelMax) * Eigen::Vector3d(x, y, z);
 
         // Set colors for visualization
         C(i, VIEW_FIELD_INDEX) = MAX_COLOR;
@@ -186,20 +189,18 @@ void createColorSphere(int N, Eigen::VectorXf& measures, Eigen::VectorXf& latitu
 
     for (int i = 0; i <= N; ++i) {
         for (int j = 0; j <= N; ++j) {
-            double theta = 2.0 * M_PI * static_cast<double>(i) / static_cast<double>(N); // entre 0 et 2 PI
+            double theta = 2.0 * M_PI * static_cast<double>(i) / static_cast<double>(N); // entre 0 et 2 PI : latitude
             double phi = M_PI * static_cast<double>(j) / static_cast<double>(N); // entre 0 et PI
 
+            // Generate the triangle
             V.row(i * (N + 1) + j) << std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi);
 
             // Find the measure corresponding to i*(N+1)*j
-            measure = measuresNormalized(nearestIndexforCoords(360*theta/(2.0*M_PI), 90 + 180*phi/M_PI, latitudes, longitudes));
-            //std::cout << measure << " " << measuresNormalizedMin << " " << measuresNormalizedMax <<  " " << std::endl;
-            //std::cout << theta << " " << phi << std::endl;
+            measure = measuresNormalized(nearestIndexforCoords(360*(0.5-theta/M_PI), 360*phi/M_PI, latitudes, longitudes));
 
             // Colorize the triangle
             color(measure, measuresNormalizedMin, 0.89, measuresNormalizedMax, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, R, G, B);
             C.row(i * (N + 1) + j) << R, G, B;
-
         }
     }
 
@@ -226,12 +227,13 @@ void createLines(const Eigen::VectorXf& measures, const Eigen::VectorXf& latitud
 
     // Populate the vertex matrix
     for (int i = 0; i < N; i++) {
-        double theta = longitudes(i) + M_PI/2;
-        double phi = latitudes(i);
+        // Conversion in radians
+        double correctedLatitude = latitudes(i)*M_PI/180;
+        double correctedLongitude = longitudes(i)*M_PI/180;
 
-        double x = sin(phi) * cos(theta);
-        double y = sin(phi) * sin(theta);
-        double z = cos(phi);
+        double x = cos(correctedLatitude) * cos(correctedLongitude);
+        double y = cos(correctedLatitude) * sin(correctedLongitude);
+        double z = sin(correctedLatitude);
 
         // Store the spherical coordinates in the vertex matrix
         V(i, VIEW_FIELD_INDEX) = x;
