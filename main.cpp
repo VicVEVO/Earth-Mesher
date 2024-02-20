@@ -1,7 +1,7 @@
 /**
  *  Project description (bruh)
  *
- *  @TODO Voir unités des données d'entrée pour bien les représenter (aucun sens actuellement)
+ *  @TODO Fix sphere
  *
  */
 #include <igl/opengl/glfw/Viewer.h>
@@ -80,7 +80,7 @@ Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
 }
 
 /**
- * Creates a sphere with vertices and faces based on measures according latitude, and longitude
+ * Creates points with vertices and faces based on measures according latitude, and longitude
  *
  * @param n The
  * @param measures, latitudes, longitudes The
@@ -194,9 +194,9 @@ void createColorSphere(int N, Eigen::VectorXf& measures, Eigen::VectorXf& latitu
 
             // Generate the triangle
             V.row(i * (N + 1) + j) << std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi);
-
+            
             // Find the measure corresponding to i*(N+1)*j
-            measure = measuresNormalized(nearestIndexforCoords(360*(0.5-theta/M_PI), 360*phi/M_PI, latitudes, longitudes));
+            measure = measuresNormalized(nearestIndexforCoords(  180/M_PI * phi, 180/M_PI * theta, latitudes, longitudes));
 
             // Colorize the triangle
             color(measure, measuresNormalizedMin, 0.89, measuresNormalizedMax, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, R, G, B);
@@ -396,8 +396,32 @@ int main(const int argc, const char *argv[]) {
                 createColorSphere(SPHERE_RESOLUTION, measures, latitudes, longitudes, V, F, C);
             }
 
+            Eigen::MatrixXd P(n, NUMBER_FIELDS);
+            Eigen::MatrixXd C2(n, NUMBER_FIELDS);
+            setPoints(n, measures, latitudes, longitudes, P, C2);
+
+            // Set up the viewer
+            igl::opengl::glfw::Viewer viewer;
+
+            // Set the viewer data
+            viewer.data().set_mesh(V, F);
+
+            viewer.data().add_points(P,Eigen::RowVector3d(255,255,255));
+
+            // Set the background color
+            viewer.core().background_color = Eigen::Vector4f(MIN_COLOR, MIN_COLOR, MIN_COLOR, ALPHA_VALUE);
+
+            // Set the colors
+            viewer.data().set_colors(C);
+
+            // Disable the lines view by default
+            viewer.data().show_lines = false;
+
+            // Launch the viewer
+            viewer.launch(false,"Example window with lines");
+
             // Display data
-            viewMeshColor(V,F,C);
+            //viewMeshColor(V,F,C);
         }
     }
 
