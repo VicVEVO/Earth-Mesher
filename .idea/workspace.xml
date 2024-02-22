@@ -123,12 +123,12 @@
     </configuration>
     <list>
       <item itemvalue="CMake Application.Unnamed" />
-      <item itemvalue="CMake Application.igl_glfw" />
-      <item itemvalue="CMake Application.igl_opengl" />
-      <item itemvalue="CMake Application.render" />
       <item itemvalue="CMake Application.glad" />
       <item itemvalue="CMake Application.glfw" />
       <item itemvalue="CMake Application.igl_core" />
+      <item itemvalue="CMake Application.igl_glfw" />
+      <item itemvalue="CMake Application.igl_opengl" />
+      <item itemvalue="CMake Application.render" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -161,7 +161,11 @@
       <workItem from="1708250222512" duration="865000" />
       <workItem from="1708348374606" duration="2992000" />
       <workItem from="1708365242219" duration="3031000" />
-      <workItem from="1708421162238" duration="4541000" />
+      <workItem from="1708421162238" duration="4564000" />
+      <workItem from="1708428329385" duration="2855000" />
+      <workItem from="1708432235238" duration="1548000" />
+      <workItem from="1708440776911" duration="1239000" />
+      <workItem from="1708617535069" duration="76000" />
     </task>
     <servers />
   </component>

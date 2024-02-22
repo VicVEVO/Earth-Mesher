@@ -9,6 +9,8 @@
 #include "errorMessages.h"
 #include "constants.h"
 
+#define TO_RAD (M_PI/180.0)
+
 /**
  * Converts a .csv File into a Eigen Matrix
  *
@@ -140,6 +142,14 @@ void color(const float measure, const float minV, const float avgV, const float 
     }
 }
 
+float distance(float lat1, float lon1, float lat2, float lon2) {
+    float d1 = abs(lat1 - lat2) + abs((lon1 - lon2));
+    float d2 = abs(360-lat1 - lat2) + abs((lon1 - lon2));
+
+    return std::min(d1,d2);
+}
+
+
 /**
  * Indicates the nearest index for the (latitude,longitude) coordinates in a given sphere that fits with the latitudes and longitudes data.
  *
@@ -148,16 +158,17 @@ void color(const float measure, const float minV, const float avgV, const float 
  *
  * @return The index associated with the best fit
  */
-int nearestIndexforCoords(float latitude, float longitude, Eigen::VectorXf& latitudes, Eigen::VectorXf& longitudes) {
-    float distanceMin = (latitudes(0) - latitude) * (latitudes(0) - latitude) + (longitudes(0) - longitude)*(longitudes(0) - longitude);
-    int indiceMin = 0;
+int nearestIndexforCoords(const float latitude, const float longitude, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes) {
+    float distanceMin = distance(latitude, longitude, latitudes(0), longitudes(0));
+    int minIndex = 0;
     for (int i = 1; i < latitudes.size(); i++) {
-        if ((latitudes(i) - latitude) * (latitudes(i) - latitude) + (longitudes(i) - longitude)*(longitudes(i) - longitude) < distanceMin ) {
-            distanceMin = (latitudes(i) - latitude) * (latitudes(i) - latitude) + (longitudes(i) - longitude)*(longitudes(i) - longitude);
-            indiceMin = i;
+        float currentDistance = distance(latitude, longitude, latitudes(i), longitudes(i));
+        if (currentDistance < distanceMin ) {
+            distanceMin = currentDistance;
+            minIndex = i;
         }
     }
-    return indiceMin;
+    return minIndex;
 }
 
 /**
@@ -170,7 +181,7 @@ int nearestIndexforCoords(float latitude, float longitude, Eigen::VectorXf& lati
  */
 void createColorSphere(int N, Eigen::VectorXf& measures, Eigen::VectorXf& latitudes, Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::MatrixXd& C) {
     // Triangle colors initialisation
-    int R,G,B;
+    int R, G, B;
 
     // Triangle measure initialisation
     float measure;
@@ -189,17 +200,21 @@ void createColorSphere(int N, Eigen::VectorXf& measures, Eigen::VectorXf& latitu
 
     for (int i = 0; i <= N; ++i) {
         for (int j = 0; j <= N; ++j) {
-            double theta = 2.0 * M_PI * static_cast<double>(i) / static_cast<double>(N); // entre 0 et 2 PI : latitude
-            double phi = M_PI * static_cast<double>(j) / static_cast<double>(N); // entre 0 et PI
+            double theta = 2.0 * M_PI * static_cast<double>(i) / static_cast<double>(N); // entre 0 et 2 PI : longitude
+            double phi = M_PI * static_cast<double>(j) / static_cast<double>(N); // entre 0 et PI : latitude
 
             // Generate the triangle
             V.row(i * (N + 1) + j) << std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi);
-            
+
             // Find the measure corresponding to i*(N+1)*j
-            measure = measuresNormalized(nearestIndexforCoords(  180/M_PI * phi, 180/M_PI * theta, latitudes, longitudes));
+            measure = measuresNormalized(
+                    nearestIndexforCoords(180 / M_PI * phi, 180 / M_PI * theta, latitudes, longitudes));
+
+            //std::cout << latitudes(nearestIndexforCoords(180 / M_PI * phi, 180 / M_PI * theta, latitudes, longitudes)) << " " << longitudes(nearestIndexforCoords(180 / M_PI * phi, 180 / M_PI * theta, latitudes, longitudes)) << " " << 180 / M_PI * phi << " " << 180 / M_PI * theta << std::endl;
 
             // Colorize the triangle
-            color(measure, measuresNormalizedMin, 0.89, measuresNormalizedMax, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, R, G, B);
+            color(measure, measuresNormalizedMin, 0.7, measuresNormalizedMax, MAX_COLOR, MIN_COLOR, MIN_COLOR,
+                  MIN_COLOR, MAX_COLOR, MIN_COLOR, MIN_COLOR, MIN_COLOR, MAX_COLOR, R, G, B);
             C.row(i * (N + 1) + j) << R, G, B;
         }
     }
