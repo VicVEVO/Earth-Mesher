@@ -1,6 +1,7 @@
 # Earth Mesher
 
 Using satellite data, create a comprehensive 3D visualization of Earth's measured characteristics (such as altitude, temperature,..). Then, feel free to plot -for instance- Earth's geodesy with the trajectory of the satellite that captured the data.
+The data I took for thee example are available there:
 
 ## Example by plotting altitude (with points)
 <p align="center">
