@@ -208,7 +208,7 @@ void createColorSphere(int N, Eigen::VectorXf& measures, Eigen::VectorXf& latitu
 
             // Find the measure corresponding to i*(N+1)*j
             measure = measuresNormalized(
-                    nearestIndexforCoords(180 / M_PI * phi, 180 / M_PI * theta, latitudes, longitudes));
+                    nearestIndexforCoords(180 / M_PI * phi, 180 / M_PI * acos(sin(theta)), latitudes, longitudes));
 
             //std::cout << latitudes(nearestIndexforCoords(180 / M_PI * phi, 180 / M_PI * theta, latitudes, longitudes)) << " " << longitudes(nearestIndexforCoords(180 / M_PI * phi, 180 / M_PI * theta, latitudes, longitudes)) << " " << 180 / M_PI * phi << " " << 180 / M_PI * theta << std::endl;
 
