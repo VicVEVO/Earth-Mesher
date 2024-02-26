@@ -18,10 +18,7 @@ ajouter comment utiliser + screenshots
 
 **Compile** this project using the standard cmake routine:
 
-    mkdir build
-    cd build
-    cmake ..
-    make
+    mkdir build && cd build && cmake .. && make
 
 This should find and build the dependencies and create a `render` binary. Then, **run** it for a render with points (-P) or a mesh (-S):
 
