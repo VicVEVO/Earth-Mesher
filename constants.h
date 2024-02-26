@@ -48,6 +48,7 @@ const int R_MAX = 0;
 const int G_MAX = 0;
 const int B_MAX = 4;
 
+/* Color for unexplored data */
 const int R_UNEXPLORED = 1;
 const int G_UNEXPLORED = 1;
 const int B_UNEXPLORED = 1;

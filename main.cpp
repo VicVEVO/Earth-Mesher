@@ -1,7 +1,7 @@
 /**
- *  Project description (bruh)
+ *  Project description.
  *
- *  @TODO Fix sphere
+ *  @TODO The description
  *
  */
 #include <igl/opengl/glfw/Viewer.h>
