@@ -1,6 +1,8 @@
 # Earth Mesher
 
 Using satellite data, create a comprehensive 3D visualization of Earth's measured characteristics (such as altitude, temperature,..). Then, feel free to plot -for instance- Earth's geodesy with the trajectory of the satellite that captured the data.
+The data I took for thee example are available there:
+ajouter comment utiliser + screenshots
 
 ## Example by plotting altitude (with points)
 <p align="center">
@@ -16,10 +18,7 @@ Using satellite data, create a comprehensive 3D visualization of Earth's measure
 
 **Compile** this project using the standard cmake routine:
 
-    mkdir build
-    cd build
-    cmake ..
-    make
+    mkdir build && cd build && cmake .. && make
 
 This should find and build the dependencies and create a `render` binary. Then, **run** it for a render with points (-P) or a mesh (-S):
 
