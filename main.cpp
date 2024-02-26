@@ -88,7 +88,7 @@ Eigen::MatrixXf getMatrixFromCSV(const std::string& csvFile) {
  * @param measures, latitudes, longitudes The
  * @param V, C The
  */
-void setPoints(const int n, const Eigen::VectorXf& levels, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXd& C) {
+void createPoints(const int n, const Eigen::VectorXf& levels, const Eigen::VectorXf& latitudes, const Eigen::VectorXf& longitudes, Eigen::MatrixXd& V, Eigen::MatrixXd& C) {
 
     double levelMax = levels.maxCoeff();
     double correctedLatitude, correctedLongitude;
@@ -142,6 +142,11 @@ void color(const float measure, const float minV, const float avgV, const float 
     }
 }
 
+/**
+ * Returns the distance between (lat1, lon1) and (lat2, lon2).
+ *
+ * @param lat1, lat2, lon1, lon2 The different altitudes and longitudes
+ */
 float distance(float lat1, float lon1, float lat2, float lon2) {
     float d1 = abs(lat1 - lat2) + abs((lon1 - lon2));
     float d2 = abs(360-lat1 - lat2) + abs((lon1 - lon2));
@@ -320,51 +325,13 @@ void createLines(const Eigen::VectorXf& measures, const Eigen::VectorXf& latitud
 // Display procedures
 
 /**
- * Display points in 3D.
+ * Launch the viewer
  *
- * @param V The matrix storing the coordinates of the vertices.
- * @param C The matrix corresponding to the color of each point.
+ * @param viewer The viewer.
  */
-void viewPoints(const Eigen::MatrixXd& V, const Eigen::MatrixXd& C) {
-    // Set up the viewer
-    igl::opengl::glfw::Viewer viewer;
-
-    // Set the viewer data
-    viewer.data().set_points(V, C);
-    viewer.data().point_size = POINT_SIZE;
-
-    // Set the background color
+void viewData(igl::opengl::glfw::Viewer viewer){
     viewer.core().background_color = Eigen::Vector4f(MIN_COLOR, MIN_COLOR, MIN_COLOR, ALPHA_VALUE);
-
-    // Launch the viewer
-    viewer.launch(false,"Example window with lines");
-}
-
-/**
- * Display a figure in 3D.
- *
- * @param V, F The matrices storing respectively the indices of the rows and the triangle connectivty.
- * @param C The matrix corresponding to the color of each triangle.
- */
-void viewMeshColor(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const Eigen::MatrixXd& C) {
-
-    // Set up the viewer
-    igl::opengl::glfw::Viewer viewer;
-
-    // Set the viewer data
-    viewer.data().set_mesh(V, F);
-
-    // Set the background color
-    viewer.core().background_color = Eigen::Vector4f(MIN_COLOR, MIN_COLOR, MIN_COLOR, ALPHA_VALUE);
-
-    // Set the colors
-    viewer.data().set_colors(C);
-
-    // Disable the lines view by default
-    viewer.data().show_lines = false;
-
-    // Launch the viewer
-    viewer.launch(false,"Example window with lines");
+    viewer.launch(false,"Data visualization window");
 }
 
 // Main program
@@ -394,11 +361,15 @@ int main(const int argc, const char *argv[]) {
         Eigen::MatrixXd V(n, NUMBER_FIELDS);
         Eigen::MatrixXd C(n, NUMBER_FIELDS);
 
-        if (plotType == "-P") {
-            setPoints(n, measures, latitudes, longitudes, V, C);
+        // Set up the viewer
+        igl::opengl::glfw::Viewer viewer;
 
-            // Display data
-            viewPoints(V, C);
+        if (plotType == "-P") {
+            createPoints(n, measures, latitudes, longitudes, V, C);
+
+            // Set the viewer data
+            viewer.data().set_points(V, C);
+            viewer.data().point_size = POINT_SIZE;
 
         } else {
             // Create a matrix to store triangle connectives
@@ -411,33 +382,22 @@ int main(const int argc, const char *argv[]) {
                 createColorSphere(SPHERE_RESOLUTION, measures, latitudes, longitudes, V, F, C);
             }
 
-            Eigen::MatrixXd P(n, NUMBER_FIELDS);
-            Eigen::MatrixXd C2(n, NUMBER_FIELDS);
-            setPoints(n, measures, latitudes, longitudes, P, C2);
-
-            // Set up the viewer
-            igl::opengl::glfw::Viewer viewer;
-
             // Set the viewer data
             viewer.data().set_mesh(V, F);
-
-            viewer.data().add_points(P,Eigen::RowVector3d(255,255,255));
-
-            // Set the background color
-            viewer.core().background_color = Eigen::Vector4f(MIN_COLOR, MIN_COLOR, MIN_COLOR, ALPHA_VALUE);
-
-            // Set the colors
             viewer.data().set_colors(C);
-
-            // Disable the lines view by default
             viewer.data().show_lines = false;
 
-            // Launch the viewer
-            viewer.launch(false,"Example window with lines");
+            /*
+            Eigen::MatrixXd P(n, NUMBER_FIELDS);
+            Eigen::MatrixXd C2(n, NUMBER_FIELDS);
+            createPoints(n, measures, latitudes, longitudes, P, C2);
 
-            // Display data
-            //viewMeshColor(V,F,C);
+            viewer.data().add_points(P,Eigen::RowVector3d(255,255,255));
+             */
+
         }
+        // Launch the viewer
+        viewData(viewer);
     }
 
     catch(const ErrorCode& errorCode) {
