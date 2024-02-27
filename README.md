@@ -25,7 +25,7 @@ The data I personally used is data from NASA's TOPEX/POSEIDON satellite, which i
 
     mkdir build && cd build && cmake .. && make
 
-This should find and build the dependencies and create a `render` binary. Then, **run** it for a render with points (-P) or a mesh (-S):
+This should find and build the dependencies and create a `render` binary. Then, **run** it for a render with points (-P), lines (-L) or with a colored sphere (-S):
 
     ./render -P (or -L, -S) <FILEPATH/file.csv>
 
