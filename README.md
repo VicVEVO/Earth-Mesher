@@ -16,7 +16,7 @@ The data I personally used is data from NASA's TOPEX/POSEIDON satellite, which i
 
 ## Example by viewing ocean depth (with colors)
 <p align="center">
-	<a href="https://github.com/VicVEVO/Earth-Mesher/blob/17d05df77ab0ff932cb8bccba06b40b95c17a717/resources/"><img src="https://github.com/VicVEVO/Earth-Mesher/blob/bb7891bfe301dc8eddbcba7c37a777c75aef58d1/resources/example-3.gif" width="900"></a>
+	<a href="https://github.com/VicVEVO/Earth-Mesher/blob/17d05df77ab0ff932cb8bccba06b40b95c17a717/resources/"><img src="https://github.com/VicVEVO/Earth-Mesher/blob/ab5e6ee93ca278823ae7f98a7dc8ebd9b3a5a047/resources/example-3.gif" width="900"></a>
 </p>
 
 ## How to run the project
