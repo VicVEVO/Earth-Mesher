@@ -29,6 +29,10 @@ This should find and build the dependencies and create a `render` binary. Then, 
 
     ./render -P (or -L, -S) <FILEPATH/file.csv>
 
+## How to convert .nc files to .csv
+
+The project submodules/NC-Converter aims at converting **.nc** files -used for storing and exchanging data from satellite observations, climate models, and simulation outputs- to **.csv** files. Check its documentation for further information.
+
 ## Dependencies
 
 The dependencies are STL, Eigen, libigl and the dependencies
