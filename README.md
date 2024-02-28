@@ -33,7 +33,7 @@ This should find and build the dependencies and create a `render` binary. Then, 
 
 ## How to convert .nc files to .csv
 
-The project submodules/NC-Converter aims at converting **.nc** files -used for storing and exchanging data from satellite observations, climate models, and simulation outputs- to **.csv** files. Check its documentation for further information.
+The project submodules/NC-Converter aims at converting **.nc** files -used for storing and exchanging data from satellite observations, climate models, and simulation outputs- to **.csv** files. Check its [documentation](https://github.com/VicVEVO/Earth-Mesher/tree/main/submodules/NC-Converter) for further information.
 
 ## Dependencies
 
