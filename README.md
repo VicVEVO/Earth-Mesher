@@ -1,8 +1,10 @@
 # Earth Mesher
 
-Using satellite data, create a comprehensive 3D visualization of Earth's measured characteristics (such as altitude, temperature,..). Then, feel free to plot -for instance- Earth's geodesy with the trajectory of the satellite that captured the data.
+Using satellite data, create a comprehensive 3D visualization of Earth's measured characteristics (such as altitude, temperature,..). Then, feel free to plot -for instance- Earth's geodesy with the trajectory of the satellite that captured the data. The data I personally used is data from NASA's TOPEX/POSEIDON satellite, which is available [there](https://cmr.earthdata.nasa.gov/virtual-directory/collections/C2599212091-POCLOUD/temporal).
+<p align="center">
+	<a href="https://github.com/VicVEVO/Earth-Mesher/blob/029848795746c3770675454244a5780ebcb422fb/resources/"><img src="https://github.com/VicVEVO/Earth-Mesher/blob/3fcffa1183f198caab3b0a20b1edd155e7a021cd/resources/command-line.gif" width="700"></a>
+</p>
 
-The data I personally used is data from NASA's TOPEX/POSEIDON satellite, which is available [there](https://cmr.earthdata.nasa.gov/virtual-directory/collections/C2599212091-POCLOUD/temporal).
 
 ## Example by plotting altitude (with points)
 <p align="center">
